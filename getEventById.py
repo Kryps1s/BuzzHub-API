@@ -3,7 +3,7 @@ from boto3.dynamodb.types import TypeDeserializer
 TABLE_NAME = "Events-dev"
 
 
-def lambda_handler(event):
+def lambda_handler(event, context):
     event_id = event['arguments']['eventId']
     key = {
         'eventId': {'S': event_id}

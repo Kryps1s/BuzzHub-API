@@ -3,7 +3,7 @@ from boto3.dynamodb.types import TypeDeserializer
 TABLE_NAME = "Events-dev"
 
 
-def lambda_handler():
+def lambda_handler(event, context):
     # Create a DynamoDB client for the specified region
     dynamodb = boto3.client('dynamodb', region_name='ca-central-1')
 
