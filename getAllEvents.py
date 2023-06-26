@@ -1,11 +1,12 @@
 import boto3
 from boto3.dynamodb.types import TypeDeserializer
 TABLE_NAME = "Events-dev"
+SORT_NAME = "upcomingEvent"
 
 
 def lambda_handler(event, context):
     dynamodb = boto3.client('dynamodb', region_name='ca-central-1')
-    response = dynamodb.scan(TableName=TABLE_NAME)
+    response = dynamodb.scan(TableName=TABLE_NAME, IndexName=SORT_NAME)
     items = response.get('Items', [])
     deserializer = TypeDeserializer()
     items = [{key: deserializer.deserialize(value) for key, value in item.items()} for item in items]
