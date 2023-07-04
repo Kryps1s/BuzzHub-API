@@ -1,6 +1,6 @@
 import boto3
 from boto3.dynamodb.types import TypeDeserializer
-TABLE_NAME = "Events-dev"
+TABLE_NAME = "dev_calendar"
 SORT_NAME = "upcomingEvent"
 
 
@@ -17,4 +17,4 @@ def lambda_handler(event, context):
         if 'limit' in arguments:
             limit = arguments.get('limit')
             items = items[:limit]
-    return [items]
+    return items

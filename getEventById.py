@@ -1,6 +1,6 @@
 import boto3
 from boto3.dynamodb.types import TypeDeserializer
-TABLE_NAME = "Events-dev"
+TABLE_NAME = "dev_calendar"
 
 
 def lambda_handler(event, context):
