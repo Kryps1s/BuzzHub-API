@@ -1,6 +1,7 @@
 import boto3
 from boto3.dynamodb.types import TypeDeserializer
-TABLE_NAME = "dev_calendar"
+import os
+TABLE_NAME = os.environ['env']+"_calendar"
 
 
 def lambda_handler(event, context):
@@ -8,7 +9,7 @@ def lambda_handler(event, context):
     key = {
         'eventId': {'S': event_id}
     }
-    dynamodb = boto3.client('dynamodb', region_name="ca-central-1")
+    dynamodb = boto3.client('dynamodb', os.environ['region'])
     response = dynamodb.get_item(
         TableName=TABLE_NAME,
         Key=key
