@@ -9,7 +9,7 @@ TABLE_NAME = os.environ['env']+"_calendar"
 SORT_NAME = "upcomingEvent"
 
 
-def lambda_handler(event, context):
+def lambda_handler(event, _):
     """
     wrapper aroud the DynamoDB scan function. 
     event : the event object from the GraphQL query
