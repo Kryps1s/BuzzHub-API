@@ -22,7 +22,11 @@ jobs:
           python-version: 3.10.12
 
       - name: Install dependencies
-        run: pip install pylint
+        run: |
+          pip install pylint
+          pip intall boto3
+          pip install os
+        
 
       - name: Run pylint
         run: pylint ./*.py
