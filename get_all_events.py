@@ -1,6 +1,7 @@
+import os
 import boto3
 from boto3.dynamodb.types import TypeDeserializer
-import os
+
 TABLE_NAME = os.environ['env']+"_calendar"
 SORT_NAME = "upcomingEvent"
 
