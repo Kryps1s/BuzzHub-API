@@ -24,8 +24,7 @@ jobs:
       - name: Install dependencies
         run: |
           pip install pylint
-          pip intall boto3
-          pip install os
+          pip install boto3
         
 
       - name: Run pylint
