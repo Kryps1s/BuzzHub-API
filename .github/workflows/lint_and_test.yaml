@@ -33,17 +33,7 @@ jobs:
         run: pylint **/*.py
 
       - name: set environment variables
-        run: |
-          output=$(python set_env_vars.py)
-          output="${output//'%'/'%25'}"
-          output="${output//$'\n'/'%0A'}"
-          output="${output//$'\r'/'%0D'}"
-          echo "::set-output name=log::$output"
-        id: step-execute-parser
-
-      - name: print environment variables
-        run: echo "${{ steps.step-execute-parser.outputs.log }}"
+        run: output=$(python set_env_vars.py)
       
       - name: testing
-        run: |
-          pytest -c pytest.ini
+        run: pytest
