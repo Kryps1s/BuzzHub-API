@@ -44,8 +44,8 @@ def test_get_all_events_future(event):
     # Call the function
     result = lambda_handler(event, {})
     # Check all events end properties are in the future
-    for event in result:
-        assert datetime.datetime.now() < datetime.datetime.fromisoformat(event['end'])
+    for item in result:
+        assert datetime.datetime.now() < datetime.datetime.fromisoformat(item['end'])
 
 #test_get_all_events returns the events of selected type
 @mock_dynamodb
@@ -57,5 +57,5 @@ def test_get_all_events_type(event):
     # Call the function
     result = lambda_handler(event, {})
     # Check all events are of type MEETING
-    for event in result:
-        assert event['type'] == 'MEETING'
+    for item in result:
+        assert item['type'] == 'MEETING'
