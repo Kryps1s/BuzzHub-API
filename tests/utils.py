@@ -1,8 +1,6 @@
 """ This file contains setup functions that are used by multiple tests."""
 import datetime
-import pytest
 import boto3
-from moto import mock_dynamodb
 
 def create_mock_table():
     """ Generates DynamoDB Table with mock data"""

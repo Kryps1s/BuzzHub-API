@@ -46,7 +46,7 @@ def test_get_all_events_future(event):
     # Check all events end properties are in the future
     for event in result:
         assert datetime.datetime.now() < datetime.datetime.fromisoformat(event['end'])
-  
+
 #test_get_all_events returns the events of selected type
 @mock_dynamodb
 def test_get_all_events_type(event):
