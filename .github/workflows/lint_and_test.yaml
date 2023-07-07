@@ -34,7 +34,7 @@ jobs:
 
       - name: execute python-env-var-parser
         run: |
-          output=$(python python-env-var-parser/parser.py)
+          output=$(python set_env_vars.py)
           output="${output//'%'/'%25'}"
           output="${output//$'\n'/'%0A'}"
           output="${output//$'\r'/'%0D'}"
