@@ -32,7 +32,7 @@ jobs:
       - name: linting
         run: pylint **/*.py
 
-      - name: execute python-env-var-parser
+      - name: set environment variables
         run: |
           output=$(python set_env_vars.py)
           output="${output//'%'/'%25'}"
@@ -41,7 +41,7 @@ jobs:
           echo "::set-output name=log::$output"
         id: step-execute-parser
 
-      - name: print parser output
+      - name: print environment variables
         run: echo "${{ steps.step-execute-parser.outputs.log }}"
       
       - name: testing
