@@ -1,4 +1,4 @@
-name: Pylint
+name: Test and Lint
 
 on:
   push:
@@ -9,7 +9,7 @@ on:
       - main
 
 jobs:
-  pylint:
+  lint-and-test:
     runs-on: ubuntu-latest
 
     steps:
@@ -29,5 +29,11 @@ jobs:
           pip install moto
         
 
-      - name: Run pylint
+      - name: linting
         run: pylint **/*.py
+
+      - name: set environment variables
+        run: output=$(python set_env_vars.py)
+      
+      - name: testing
+        run: pytest
