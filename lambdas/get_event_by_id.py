@@ -14,6 +14,13 @@ def lambda_handler(event, _):
     id is a string
     event : the event object from the GraphQL query
     """
+    #check arguments has event id, event_id is a string, and not empty
+    if 'eventId' not in event['arguments']:
+        return {'error': 'eventId must be a string and not empty'}
+    if not isinstance(event['arguments']['eventId'], str):
+        return {'error': 'eventId must be a string and not empty'}
+    if not event['arguments']['eventId']:
+        return {'error': 'eventId must be a string and not empty'}
     event_id = event['arguments']['eventId']
     key = {
         'eventId': {'S': event_id}
@@ -23,6 +30,9 @@ def lambda_handler(event, _):
         TableName=TABLE_NAME,
         Key=key
     )
+    #handle item not found
+    if 'Item' not in response:
+        return None
     item = response.get('Item')
     deserializer = TypeDeserializer()
     # Convert DynamoDB item to raw JSON
