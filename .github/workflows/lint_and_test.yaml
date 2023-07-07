@@ -33,8 +33,5 @@ jobs:
         run: pylint **/*.py
 
       - name: testing
-        env:
-          ENV: "test"
-          REGION: "ca-central-1"
         run: |
-          pytest --env=ENV --env=REGION
+          pytest -c pytest.ini
