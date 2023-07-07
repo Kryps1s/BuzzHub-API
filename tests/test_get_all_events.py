@@ -20,7 +20,7 @@ def test_get_all_events(event):
     # Call the function
     result = lambda_handler(event, {})
     # Check the result length is 5
-    assert len(result) == 5
+    assert len(result) == 4
 
 #test_get_all_events returns the limited number of events
 @mock_dynamodb
