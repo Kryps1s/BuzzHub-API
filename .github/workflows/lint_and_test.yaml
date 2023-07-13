@@ -33,9 +33,9 @@ jobs:
       
       - name: testing
         run: pytest
-        
+
   dev_get_event_by_id:
-    if: github.ref == 'refs/heads/develop'
+    if: ${{ github.ref == 'refs/heads/develop' }}
     needs: lint-and-test
     runs-on: ubuntu-latest
     steps:
@@ -52,7 +52,7 @@ jobs:
       - run: aws lambda update-function-code --function-name=dev_get_event_by_id --zip-file=fileb://dev_get_event_by_id.zip
  
   dev_get_events:
-    if: github.ref == 'refs/heads/develop'
+    if: ${{ github.ref == 'refs/heads/develop' }}
     needs: lint-and-test
     runs-on: ubuntu-latest
     steps:
