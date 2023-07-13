@@ -1,5 +1,5 @@
+# pylint: disable-all
 """ This file contains setup functions that are used by multiple tests."""
-import os
 
 def mock_beekeeping_board():
     return [
