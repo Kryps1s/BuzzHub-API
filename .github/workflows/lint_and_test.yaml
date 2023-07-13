@@ -25,11 +25,8 @@ jobs:
       - name: Install dependencies
         run: |
           pip install pylint
-          pip install boto3
           pip install pytest
-          pip install moto
         
-
       - name: linting
         run: pylint **/*.py
 
