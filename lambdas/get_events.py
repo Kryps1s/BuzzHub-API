@@ -1,6 +1,7 @@
 """
 This lambda function will return all events in the calendar, with optional modifiers. 
 """
+    # pylint: disable=R0801
 import os
 import json
 from datetime import datetime
