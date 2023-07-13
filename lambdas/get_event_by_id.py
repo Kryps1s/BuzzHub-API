@@ -46,9 +46,9 @@ def map_card_to_event(event_type, card):
         for label in card['labels']:
             if label['name'].startswith("MONTHLY"):
                 event['isMonthly'] = True
-            if label['name'] is "ONLINE":
+            if label['name'] == "ONLINE":
                 event['location'] = "ONLINE"
-            if label['name'] is "IN-PERSON":
+            if label['name'] == "IN-PERSON":
                 event['location'] = "IN-PERSON"
     return event
 

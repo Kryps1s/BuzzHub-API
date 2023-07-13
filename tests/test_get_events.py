@@ -22,12 +22,11 @@ def test_get_events(mock_fetch_events, event):
     def side_effect(board_id):
         if board_id == os.environ['TRELLO_BOARD_MEETING']:
             return mock_meeting_board()
-        elif board_id == os.environ['TRELLO_BOARD_BEEKEEPING']:
+        if board_id == os.environ['TRELLO_BOARD_BEEKEEPING']:
             return mock_beekeeping_board()
-        elif board_id == os.environ['TRELLO_BOARD_COLLECTIVE']:
+        if board_id == os.environ['TRELLO_BOARD_COLLECTIVE']:
             return mock_collective_board()
-        else:
-            return []
+        return []
     mock_fetch_events.side_effect = side_effect
     result = lambda_handler(event, {})
     assert len(result) == 4
@@ -40,12 +39,11 @@ def test_get_events_limit(mock_fetch_events, event):
     def side_effect(board_id):
         if board_id == os.environ['TRELLO_BOARD_MEETING']:
             return mock_meeting_board()
-        elif board_id == os.environ['TRELLO_BOARD_BEEKEEPING']:
+        if board_id == os.environ['TRELLO_BOARD_BEEKEEPING']:
             return mock_beekeeping_board()
-        elif board_id == os.environ['TRELLO_BOARD_COLLECTIVE']:
+        if board_id == os.environ['TRELLO_BOARD_COLLECTIVE']:
             return mock_collective_board()
-        else:
-            return []
+        return []
     mock_fetch_events.side_effect = side_effect
     event['arguments']['limit'] = 2
     # Call the function
@@ -64,12 +62,11 @@ def test_get_events_future(mock_fetch_events, event):
     def side_effect(board_id):
         if board_id == os.environ['TRELLO_BOARD_MEETING']:
             return mock_meeting_board()
-        elif board_id == os.environ['TRELLO_BOARD_BEEKEEPING']:
+        if board_id == os.environ['TRELLO_BOARD_BEEKEEPING']:
             return mock_beekeeping_board()
-        elif board_id == os.environ['TRELLO_BOARD_COLLECTIVE']:
+        if board_id == os.environ['TRELLO_BOARD_COLLECTIVE']:
             return mock_collective_board()
-        else:
-            return []
+        return []
     mock_fetch_events.side_effect = side_effect
     event['arguments']['future'] = True
     # Call the function
@@ -86,12 +83,11 @@ def test_get_events_past(mock_fetch_events, event):
     def side_effect(board_id):
         if board_id == os.environ['TRELLO_BOARD_MEETING']:
             return mock_meeting_board()
-        elif board_id == os.environ['TRELLO_BOARD_BEEKEEPING']:
+        if board_id == os.environ['TRELLO_BOARD_BEEKEEPING']:
             return mock_beekeeping_board()
-        elif board_id == os.environ['TRELLO_BOARD_COLLECTIVE']:
+        if board_id == os.environ['TRELLO_BOARD_COLLECTIVE']:
             return mock_collective_board()
-        else:
-            return []
+        return []
     mock_fetch_events.side_effect = side_effect
     event['arguments']['future'] = False
     event['arguments']['type'] = ["MEETING"]
@@ -110,12 +106,11 @@ def test_get_events_type(mock_fetch_events, event):
     def side_effect(board_id):
         if board_id == os.environ['TRELLO_BOARD_MEETING']:
             return mock_meeting_board()
-        elif board_id == os.environ['TRELLO_BOARD_BEEKEEPING']:
+        if board_id == os.environ['TRELLO_BOARD_BEEKEEPING']:
             return mock_beekeeping_board()
-        elif board_id == os.environ['TRELLO_BOARD_COLLECTIVE']:
+        if board_id == os.environ['TRELLO_BOARD_COLLECTIVE']:
             return mock_collective_board()
-        else:
-            return []
+        return []
     mock_fetch_events.side_effect = side_effect
     event['arguments']['type'] = ['MEETING']
     # Call the function
@@ -132,12 +127,11 @@ def test_get_events_job(mock_fetch_events, event):
     def side_effect(board_id):
         if board_id == os.environ['TRELLO_BOARD_MEETING']:
             return mock_meeting_board()
-        elif board_id == os.environ['TRELLO_BOARD_BEEKEEPING']:
+        if board_id == os.environ['TRELLO_BOARD_BEEKEEPING']:
             return mock_beekeeping_board()
-        elif board_id == os.environ['TRELLO_BOARD_COLLECTIVE']:
+        if board_id == os.environ['TRELLO_BOARD_COLLECTIVE']:
             return mock_collective_board()
-        else:
-            return []
+        return []
     mock_fetch_events.side_effect = side_effect
     event['arguments']['jobs'] = ['EQUIPMENT']
     event['arguments']['type'] = ['BEEKEEPING']
@@ -155,12 +149,11 @@ def test_get_events_hive(mock_fetch_events, event):
     def side_effect(board_id):
         if board_id == os.environ['TRELLO_BOARD_MEETING']:
             return mock_meeting_board()
-        elif board_id == os.environ['TRELLO_BOARD_BEEKEEPING']:
+        if board_id == os.environ['TRELLO_BOARD_BEEKEEPING']:
             return mock_beekeeping_board()
-        elif board_id == os.environ['TRELLO_BOARD_COLLECTIVE']:
+        if board_id == os.environ['TRELLO_BOARD_COLLECTIVE']:
             return mock_collective_board()
-        else:
-            return []
+        return []
     mock_fetch_events.side_effect = side_effect
     event['arguments']['hives'] = ['ROSE']
     event['arguments']['type'] = ['BEEKEEPING']
@@ -178,12 +171,11 @@ def test_get_events_date_range(mock_fetch_events, event):
     def side_effect(board_id):
         if board_id == os.environ['TRELLO_BOARD_MEETING']:
             return mock_meeting_board()
-        elif board_id == os.environ['TRELLO_BOARD_BEEKEEPING']:
+        if board_id == os.environ['TRELLO_BOARD_BEEKEEPING']:
             return mock_beekeeping_board()
-        elif board_id == os.environ['TRELLO_BOARD_COLLECTIVE']:
+        if board_id == os.environ['TRELLO_BOARD_COLLECTIVE']:
             return mock_collective_board()
-        else:
-            return []
+        return []
     mock_fetch_events.side_effect = side_effect
     #date range argument an array for start and end timestamps in format %Y-%m-%dT%H:%M:%S.%fZ
     event['arguments']['dateRange'] = ['2023-06-01T00:00:00.000Z', '2023-06-30T00:00:00.000Z']
@@ -202,12 +194,11 @@ def test_get_events_date_range_order(mock_fetch_events, event):
     def side_effect(board_id):
         if board_id == os.environ['TRELLO_BOARD_MEETING']:
             return mock_meeting_board()
-        elif board_id == os.environ['TRELLO_BOARD_BEEKEEPING']:
+        if board_id == os.environ['TRELLO_BOARD_BEEKEEPING']:
             return mock_beekeeping_board()
-        elif board_id == os.environ['TRELLO_BOARD_COLLECTIVE']:
+        if board_id == os.environ['TRELLO_BOARD_COLLECTIVE']:
             return mock_collective_board()
-        else:
-            return []
+        return []
     mock_fetch_events.side_effect = side_effect
     #date range argument an array for start and end timestamps in format %Y-%m-%dT%H:%M:%S.%fZ
     event['arguments']['dateRange'] = ['2023-06-30T00:00:00.000Z', '2023-06-01T00:00:00.000Z']
@@ -226,9 +217,9 @@ def test_get_events_date_range_one_date(mock_fetch_events, event):
     def side_effect(board_id):
         if board_id == os.environ['TRELLO_BOARD_MEETING']:
             return mock_meeting_board()
-        elif board_id == os.environ['TRELLO_BOARD_BEEKEEPING']:
+        if board_id == os.environ['TRELLO_BOARD_BEEKEEPING']:
             return mock_beekeeping_board()
-        elif board_id == os.environ['TRELLO_BOARD_COLLECTIVE']:
+        if board_id == os.environ['TRELLO_BOARD_COLLECTIVE']:
             return mock_collective_board()
         return []
     mock_fetch_events.side_effect = side_effect
@@ -249,12 +240,11 @@ def test_get_events_all_arguments(mock_fetch_events, event):
     def side_effect(board_id):
         if board_id == os.environ['TRELLO_BOARD_MEETING']:
             return mock_meeting_board()
-        elif board_id == os.environ['TRELLO_BOARD_BEEKEEPING']:
+        if board_id == os.environ['TRELLO_BOARD_BEEKEEPING']:
             return mock_beekeeping_board()
-        elif board_id == os.environ['TRELLO_BOARD_COLLECTIVE']:
+        if board_id == os.environ['TRELLO_BOARD_COLLECTIVE']:
             return mock_collective_board()
-        else:
-            return []
+        return []
     mock_fetch_events.side_effect = side_effect
     event['arguments']['dateRange'] = ['2023-06-01T00:00:00.000Z', '2023-06-30T00:00:00.000Z']
     event['arguments']['type'] = ['BEEKEEPING']
