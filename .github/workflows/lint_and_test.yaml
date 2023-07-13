@@ -5,7 +5,7 @@ on:
     branches:
       - main
       - develop
-
+      
 jobs:
   lint-and-test:
     runs-on: ubuntu-latest
