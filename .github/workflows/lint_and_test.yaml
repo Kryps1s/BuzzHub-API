@@ -5,7 +5,7 @@ on:
     branches:
       - main
       - develop
-
+      
 jobs:
   lint-and-test:
     runs-on: ubuntu-latest
@@ -54,17 +54,11 @@ jobs:
     needs: lint-and-test
     runs-on: ubuntu-latest
     steps:
-
-      - name: Checkout repository
-        uses: actions/checkout@v3
-
-      - name: Setup node
-        uses: actions/setup-node@v3
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
         with:
           node-version: 16
-
-      - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v2
+      - uses: aws-actions/configure-aws-credentials@v2
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
@@ -91,7 +85,4 @@ jobs:
           TRELLO_BOARD_COLLECTIVE=${{ secrets.TRELLO_BOARD_COLLECTIVE }},
           TRELLO_BOARD_MEETING=${{ secrets.TRELLO_BOARD_MEETING }}
           }"
-      
-      
-      
       
