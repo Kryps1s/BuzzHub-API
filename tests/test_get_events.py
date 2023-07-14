@@ -90,7 +90,6 @@ def test_get_events_past(mock_fetch_events, event):
         return []
     mock_fetch_events.side_effect = side_effect
     event['arguments']['future'] = False
-    event['arguments']['type'] = ["MEETING"]
     # Call the function
     result = lambda_handler(event, {})
     for item in result:
@@ -262,4 +261,24 @@ def test_get_events_all_arguments(mock_fetch_events, event):
     # Check all events are in the date range
     for item in result:
         assert item['start'] > '2023-06-01' and item['start'] < '2023-06-30'
-        
+
+#test get all events all arguments return with __typename
+@patch('lambdas.get_events.fetch_events')
+def test_get_events_all_arguments_typename(mock_fetch_events, event):
+    """Test get_events function"""
+    # Configure the mock behavior
+    def side_effect(board_id):
+        if board_id == os.environ['TRELLO_BOARD_MEETING']:
+            return mock_meeting_board()
+        if board_id == os.environ['TRELLO_BOARD_BEEKEEPING']:
+            return mock_beekeeping_board()
+        if board_id == os.environ['TRELLO_BOARD_COLLECTIVE']:
+            return mock_collective_board()
+        return []
+    mock_fetch_events.side_effect = side_effect
+
+    # Call the function
+    result = lambda_handler(event, {})
+    # Check __typename is returned
+    for item in result:
+        assert '__typename' in item
