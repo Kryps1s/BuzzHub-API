@@ -50,6 +50,27 @@ def fetch_events(board_id):
     return cards
 
 
+def map_beekeeping_event(event, card):
+    """Map trello card to beekeeping event"""
+    event['__typename'] = "BeekeepingEvent"
+    event['jobs'] = []
+    event['hives'] = []
+    event['roles'] = []
+    #try parsing {} enclosure in desc into json if first character is {
+    if card['desc'].startswith("{") and is_valid_json(card['desc'].split("}")[0] + "}"):
+        roles = json.loads(card['desc'].split("}")[0] + "}")
+        #add roles to event
+        event['roles'].append(roles)
+    event['type'] = "BEEKEEPING"
+    #loop through labels
+    for label in card['labels']:
+        #if label name starts with job or hive, add to event array
+        if label['name'].startswith("job"):
+            event['jobs'].append(label['name'].split("job:")[1])
+        elif label['name'].startswith("hive"):
+            event['hives'].append(label['name'].split("hive:")[1])
+    return event
+
 def map_card_to_event(event_type, cards):
     """Map trello card to event"""
     events = []
@@ -60,23 +81,7 @@ def map_card_to_event(event_type, cards):
         event['start'] = card['due']
         #map specific event fields
         if event_type == "BEEKEEPING":
-            event['__typename'] = "BeekeepingEvent"
-            event['jobs'] = []
-            event['hives'] = []
-            event['roles'] = []
-            #try parsing {} enclosure in desc into json if first character is {
-            if card['desc'].startswith("{") and is_valid_json(card['desc'].split("}")[0] + "}"):
-                roles = json.loads(card['desc'].split("}")[0] + "}")
-                #add roles to event
-                event['roles'].append(roles)
-            event['type'] = event_type
-            #loop through labels
-            for label in card['labels']:
-                #if label name starts with job or hive, add to event array
-                if label['name'].startswith("job"):
-                    event['jobs'].append(label['name'].split("job:")[1])
-                elif label['name'].startswith("hive"):
-                    event['hives'].append(label['name'].split("hive:")[1])
+            event = map_beekeeping_event(event, card)
             #add if there is at least one job
             if len(event['jobs']) > 0:
                 events.append(event)
@@ -116,18 +121,22 @@ def filter_events_by_future_and_order(events, future):
     """Filter events by future"""
     if future is not None:
         for item in events:
+            filtered_events = []
             for event in item['events']:
                 if future is True:
-                    if datetime.strptime(event['start'], "%Y-%m-%dT%H:%M:%S.%fZ") < datetime.now():
-                        item['events'].remove(event)
+                    if datetime.strptime(event['start'], "%Y-%m-%dT%H:%M:%S.%fZ") > \
+                        datetime.now():
+                        filtered_events.append(event)
                 elif future is False:
-                    if datetime.strptime(event['start'], "%Y-%m-%dT%H:%M:%S.%fZ") > datetime.now():
-                        item['events'].remove(event)
+                    if datetime.strptime(event['start'], "%Y-%m-%dT%H:%M:%S.%fZ") < \
+                        datetime.now():
+                        filtered_events.append(event)
             if future is True:
                 #order by start date
-                item['events'].sort(key=lambda x: x['start'])
+                filtered_events.sort(key=lambda x: x['start'])
             elif future is False:
-                item['events'].sort(key=lambda x: x['start'], reverse=True)
+                filtered_events.sort(key=lambda x: x['start'], reverse=True)
+            item['events'] = filtered_events
     else:
         for item in events:
             item['events'].sort(key=lambda x: x['start'])
@@ -156,9 +165,11 @@ def filter_events_by_beekeeping(item, hives, jobs):
 def filter_events_by_meeting(item, is_monthly):
     """Filter meeting events by is_monthly"""
     if is_monthly is True:
+        filtered_events = []
         for meeting_event in item['events']:
-            if meeting_event["isMonthly"] != is_monthly:
-                item['events'].remove(meeting_event)
+            if meeting_event["isMonthly"] is True:
+                filtered_events.append(meeting_event)
+        item['events'] = filtered_events
     return item
 
 def lambda_handler(event, _):

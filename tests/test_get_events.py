@@ -90,7 +90,6 @@ def test_get_events_past(mock_fetch_events, event):
         return []
     mock_fetch_events.side_effect = side_effect
     event['arguments']['future'] = False
-    event['arguments']['type'] = ["MEETING"]
     # Call the function
     result = lambda_handler(event, {})
     for item in result:
