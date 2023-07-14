@@ -80,7 +80,7 @@ jobs:
         run: sleep 15
       
       - name: Update lambda env secrets
-        run: >
+        run: |
         aws lambda update-function-configuration --function-name dev_get_events --environment "Variables={TRELLO_KEY=${{ secrets.TRELLO_KEY }},
         TRELLO_TOKEN=${{ secrets.TRELLO_TOKEN }},
         BEEKEEPING_BOARD_ID=${{ secrets.BEEKEEPING_BOARD_ID }},
