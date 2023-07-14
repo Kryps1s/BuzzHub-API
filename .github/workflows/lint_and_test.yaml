@@ -64,5 +64,5 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ca-central-1
       - run: zip -j dev_get_events.zip ./lambdas/get_events.py
-      - run: aws lambda update-function-code --function-name=dev_get_events --zip-file=fileb://dev_get_events.zip 
       - run: aws lambda update-function-configuration --function-name dev_get_events --environment "Variables={TRELLO_KEY=${{ secrets.TRELLO_KEY }},TRELLO_TOKEN=${{ secrets.TRELLO_TOKEN }}}"
+      - run: aws lambda update-function-code --function-name=dev_get_events --zip-file=fileb://dev_get_events.zip 
