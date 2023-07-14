@@ -7,6 +7,7 @@ def mock_beekeeping_board():
     "shortLink": "oBsiLXUW",
     "due": "2023-07-14T16:00:00.000Z",
     "desc": "",
+    "name": "Inspection des ruches",
     "labels": [
       {
         "shortLink": "oBsiLXUW",
@@ -26,6 +27,7 @@ def mock_beekeeping_board():
     "shortLink": "oBsiLXUW",
     "due": "2023-07-19T22:00:00.000Z",
     "desc": "",
+    "name": "Inspection des ruches",
     "labels": [
       {
         "shortLink": "oBsiLXUW",
@@ -44,6 +46,7 @@ def mock_beekeeping_board():
   {
     "shortLink": "oBsiLXUW",
     "due": "2023-08-01T18:58:00.000Z",
+    "name": "Inspection des ruches",
     "desc": "",
     "labels": [
       {
@@ -62,6 +65,7 @@ def mock_beekeeping_board():
   },
   {
     "shortLink": "oBsiLXUW",
+    "name": "Inspection des ruches",
     "due": "2023-07-17T22:00:00.000Z",
     "desc": "",
     "labels": [
@@ -76,6 +80,7 @@ def mock_beekeeping_board():
   {
     "shortLink": "oBsiLXUW",
     "due": "2023-06-29T22:00:00.000Z",
+    "name": "Inspection des ruches",
     "desc": "",
     "labels": [
       {
@@ -95,6 +100,7 @@ def mock_beekeeping_board():
   {
     "shortLink": "oBsiLXUW",
     "due": "2023-05-26T22:00:00.000Z",
+    "name": "Inspection des ruches",
     "desc": "",
     "labels": [
       {
@@ -114,6 +120,7 @@ def mock_beekeeping_board():
   {
     "shortLink": "oBsiLXUW",
     "due": "2023-06-13T22:00:00.000Z",
+    "name": "Inspection des ruches",
     "desc": "",
     "labels": [
       {
@@ -133,6 +140,7 @@ def mock_beekeeping_board():
   {
     "shortLink": "oBsiLXUW",
     "due": "2023-07-04T22:00:00.000Z",
+    "name": "Inspection des ruches",
     "desc": "",
     "labels": []
   }
@@ -145,6 +153,7 @@ def mock_collective_board():
     "shortLink": "oBsiLXUW",
     "due": "2023-07-17T22:00:00.000Z",
     "desc": "",
+    "name": "collective event 1",
     "labels": [
       {
         "shortLink": "oBsiLXUW",
@@ -158,6 +167,7 @@ def mock_collective_board():
   {
     "shortLink": "oBsiLXUW",
     "due": "2023-06-05T22:00:00.000Z",
+    "name": "collective event 1",
     "desc": "",
     "labels": [
       {
@@ -172,6 +182,7 @@ def mock_collective_board():
   {
     "shortLink": "oBsiLXUW",
     "due": "2023-07-13T20:00:00.000Z",
+    "name": "collective event 1",
     "desc": "",
     "labels": [
       {
@@ -186,7 +197,8 @@ def mock_collective_board():
   {
     "shortLink": "oBsiLXUW",
     "due": "2023-07-15T22:00:00.000Z",
-    "desc": "",
+    "desc": "",    
+    "name": "collective event 1",
     "labels": [
       {
         "shortLink": "oBsiLXUW",
@@ -200,7 +212,8 @@ def mock_collective_board():
   {
     "shortLink": "oBsiLXUW",
     "due": "2023-08-08T22:00:00.000Z",
-    "desc": "",
+    "desc": "", 
+    "name": "collective event 1",
     "labels": [
       {
         "shortLink": "oBsiLXUW",
@@ -214,6 +227,7 @@ def mock_collective_board():
   {
     "shortLink": "oBsiLXUW",
     "due": "2023-08-01T22:00:00.000Z",
+    "name": "collective event 1",
     "desc": "",
     "labels": [
       {
@@ -227,6 +241,7 @@ def mock_collective_board():
   },
   {
     "shortLink": "oBsiLXUW",
+    "name": "collective event 1",
     "due": "2023-07-08T01:02:00.000Z",
     "desc": "",
     "labels": [

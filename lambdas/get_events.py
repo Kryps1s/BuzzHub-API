@@ -79,6 +79,7 @@ def map_card_to_event(event_type, cards):
         event['eventId'] = card['shortLink']
         event['type'] = event_type
         event['start'] = card['due']
+        event['name'] = card['name']
         #map specific event fields
         if event_type == "BEEKEEPING":
             event = map_beekeeping_event(event, card)
