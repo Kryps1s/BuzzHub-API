@@ -54,30 +54,14 @@ jobs:
     needs: lint-and-test
     runs-on: ubuntu-latest
     steps:
-
-      - name: Checkout repository
-        uses: actions/checkout@v3
-
-      - name: Setup node
-        uses: actions/setup-node@v3
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
         with:
           node-version: 16
-
-      - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v2
+      - uses: aws-actions/configure-aws-credentials@v2
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ca-central-1
-          
-      - name: Zip lambda
-        run: zip -j dev_get_events.zip ./lambdas/get_events.py
-      
-      - name: Update lambda env secrets
-        run: aws lambda update-function-configuration --function-name dev_get_events --environment "Variables={TRELLO_KEY=${{ secrets.TRELLO_KEY }},TRELLO_TOKEN=${{ secrets.TRELLO_TOKEN }},BEEKEEPING_BOARD_ID=${{ secrets.BEEKEEPING_BOARD_ID }},COLLECTIVE_BOARD_ID=${{ secrets.COLLECTIVE_BOARD_ID }},MEETING_BOARD_ID=${{ secrets.MEETING_BOARD_ID }},TRELLO_BOARD_BEEKEEPING=${{ secrets.TRELLO_BOARD_BEEKEEPING }},TRELLO_BOARD_COLLECTIVE=${{ secrets.TRELLO_BOARD_COLLECTIVE }},TRELLO_BOARD_MEETING=${{ secrets.TRELLO_BOARD_MEETING }}}"
-      
-      - name: Delay before updating function code
-        run: sleep 15
-      
-      - name: Update lambda code
-        run: aws lambda update-function-code --function-name=dev_get_events --zip-file=fileb://dev_get_events.zip 
+      - run: zip -j dev_get_events.zip ./lambdas/get_events.py
+      - run: aws lambda update-function-code --function-name=dev_get_events --zip-file=fileb://dev_get_events.zip
