@@ -60,6 +60,7 @@ def map_card_to_event(event_type, cards):
         event['start'] = card['due']
         #map specific event fields
         if event_type == "BEEKEEPING":
+            event['__typename'] = "BeekeepingEvent"
             event['jobs'] = []
             event['hives'] = []
             event['roles'] = []
@@ -80,6 +81,7 @@ def map_card_to_event(event_type, cards):
             if len(event['jobs']) > 0:
                 events.append(event)
         elif event_type == "MEETING":
+            event['__typename'] = "MeetingEvent"
             #check if label starting with MONTHLY is present
             for label in card['labels']:
                 if label['name'].startswith("MONTHLY"):
@@ -89,6 +91,8 @@ def map_card_to_event(event_type, cards):
                 if label['name'] == "IN-PERSON":
                     event['location'] = "IN-PERSON"
             events.append(event)
+        else:
+            event['__typename'] = "CollectiveEvent"
     return events
 
 def filter_events_by_date_range(events, date_range):
