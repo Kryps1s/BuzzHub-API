@@ -74,10 +74,10 @@ jobs:
         run: zip -j dev_get_events.zip ./lambdas/get_events.py
       
       - name: Update lambda env secrets
-        run: aws lambda update-function-configuration --function-name dev_get_events --environment "Variables={TRELLO_KEY=${{ secrets.TRELLO_KEY }},TRELLO_TOKEN=${{ secrets.TRELLO_TOKEN }}}"
+        run: aws lambda update-function-configuration --function-name dev_get_events --environment "Variables={TRELLO_KEY=${{ secrets.TRELLO_KEY }},TRELLO_TOKEN=${{ secrets.TRELLO_TOKEN }},BEEKEEPING_BOARD_ID=${{ secrets.BEEKEEPING_BOARD_ID }},COLLECTIVE_BOARD_ID=${{ secrets.COLLECTIVE_BOARD_ID }},MEETING_BOARD_ID=${{ secrets.MEETING_BOARD_ID }},TRELLO_BOARD_BEEKEEPING=${{ secrets.TRELLO_BOARD_BEEKEEPING }},TRELLO_BOARD_COLLECTIVE=${{ secrets.TRELLO_BOARD_COLLECTIVE }},TRELLO_BOARD_MEETING=${{ secrets.TRELLO_BOARD_MEETING }}}"
       
       - name: Delay before updating function code
-        run: sleep 30
+        run: sleep 15
       
       - name: Update lambda code
         run: aws lambda update-function-code --function-name=dev_get_events --zip-file=fileb://dev_get_events.zip 
