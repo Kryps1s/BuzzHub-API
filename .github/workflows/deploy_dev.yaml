@@ -1,40 +1,38 @@
-name: Deploy to Develop
+# name: Deploy to Develop
 
-on:
-  pull_request:
-    branches:
-      - develop
-jobs:
-  get_event_by_id:
-    if: github.ref == 'refs/heads/develop'
-    needs: lint-and-test
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
-        with:
-          node-version: 16
-      - uses: aws-actions/configure-aws-credentials@v2
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: ca-central-1
-      - run: zip -j dev_get_event_by_id.zip ./lambdas/get_event_by_id.py
-      - run: aws lambda update-function-code --function-name=dev_get_event_by_id --zip-file=fileb://dev_get_event_by_id.zip
+# on:
+#   pull_request:
+#     branches:
+#       - develop
+# jobs:
+#   get_event_by_id:
+#     needs: lint-and-test.lint-and-test
+#     runs-on: ubuntu-latest
+#     steps:
+#       - uses: actions/checkout@v3
+#       - uses: actions/setup-node@v3
+#         with:
+#           node-version: 16
+#       - uses: aws-actions/configure-aws-credentials@v2
+#         with:
+#           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+#           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+#           aws-region: ca-central-1
+#       - run: zip -j dev_get_event_by_id.zip ./lambdas/get_event_by_id.py
+#       - run: aws lambda update-function-code --function-name=dev_get_event_by_id --zip-file=fileb://dev_get_event_by_id.zip
  
-  get_events:
-    if: github.ref == 'refs/heads/develop'
-    needs: lint-and-test
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
-        with:
-          node-version: 16
-      - uses: aws-actions/configure-aws-credentials@v2
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: ca-central-1
-      - run: zip -j dev_get_events.zip ./lambdas/get_events.py
-      - run: aws lambda update-function-code --function-name=dev_get_events --zip-file=fileb://dev_get_events.zip
+#   get_events:
+#     needs: lint-and-test.lint-and-test
+#     runs-on: ubuntu-latest
+#     steps:
+#       - uses: actions/checkout@v3
+#       - uses: actions/setup-node@v3
+#         with:
+#           node-version: 16
+#       - uses: aws-actions/configure-aws-credentials@v2
+#         with:
+#           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+#           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+#           aws-region: ca-central-1
+#       - run: zip -j dev_get_events.zip ./lambdas/get_events.py
+#       - run: aws lambda update-function-code --function-name=dev_get_events --zip-file=fileb://dev_get_events.zip
