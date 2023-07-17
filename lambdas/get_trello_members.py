@@ -38,6 +38,9 @@ def lambda_handler(event, _):
     """Lambda handler"""
     try:
         members = fetch_members()
+        #add __typename to each member
+        for member in members:
+            member['__typename'] = "TrelloMember"
         #print to cloudwatch logs
         print("members fetched: " + str(len(members)))
         return members
