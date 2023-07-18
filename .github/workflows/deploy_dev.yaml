@@ -5,8 +5,12 @@ on:
     branches:
       - develop
 jobs:
+
   load:
-  run: sleep 1
+  runs-on: ubuntu-latest
+  steps:
+    - name: load this module
+      run: sleep 1
   
   update-lambda:
     name: Update Lambda functions
