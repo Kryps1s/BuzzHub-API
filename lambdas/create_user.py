@@ -10,6 +10,7 @@ class TrelloAPIError(Exception):
 
 def fetch_members():
     """Fetch all members from the organization"""
+    #pylint: disable=R0801
     url = "https://api.trello.com/1/organizations/" + os.environ['TRELLO_ORGANIZATION'] + "/members"
     headers = {
     "Accept": "application/json"
