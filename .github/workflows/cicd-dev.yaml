@@ -1,0 +1,199 @@
+name: CI/CD for Develop
+
+on:
+  pull_request:
+    branches:
+      - develop
+      
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.10.12
+
+      - name: Install dependencies
+        run: |
+          pip install pytest
+          pip install boto3
+          pip install requests
+        
+      - name: set environment variables
+        run: output=$(python set_env_vars.py)
+      
+      - name: testing
+        run: pytest
+
+  lint:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.10.12
+
+      - name: Install dependencies
+        run: |
+          pip install pylint
+          pip install pytest
+          pip install boto3
+          pip install requests
+        
+      - name: linting
+        run: pylint **/*.py
+
+  dev_get_event_by_id:
+    needs: [test, lint]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 16
+      - uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ca-central-1
+      - run: zip -j dev_get_event_by_id.zip ./lambdas/get_event_by_id.py
+      - run: aws lambda update-function-code --function-name=dev_get_event_by_id --zip-file=fileb://dev_get_event_by_id.zip
+ 
+  dev_get_events:
+    needs: [test, lint]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 16
+      - uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ca-central-1
+          
+      - name: Zip lambda
+        run: zip -j dev_get_events.zip ./lambdas/get_events.py
+      
+      - name: Update lambda code
+        run: aws lambda update-function-code --function-name=dev_get_events --zip-file=fileb://dev_get_events.zip 
+      
+      - name: Delay before updating function code
+        run: sleep 15
+      
+      - name: Update lambda env secrets
+        run: |
+          aws lambda update-function-configuration --function-name dev_get_events --environment "Variables={
+          TRELLO_KEY=${{ secrets.DEV_TRELLO_KEY }},
+          TRELLO_TOKEN=${{ secrets.DEV_RELLO_TOKEN }},
+          BEEKEEPING_BOARD_ID=${{ secrets.DEV_BEEKEEPING_BOARD_ID }},
+          COLLECTIVE_BOARD_ID=${{ secrets.DEV_COLLECTIVE_BOARD_ID }},
+          MEETING_BOARD_ID=${{ secrets.DEV_MEETING_BOARD_ID }},
+          TRELLO_BOARD_BEEKEEPING=${{ secrets.DEV_TRELLO_BOARD_BEEKEEPING }},
+          TRELLO_BOARD_COLLECTIVE=${{ secrets.DEV_TRELLO_BOARD_COLLECTIVE }},
+          TRELLO_BOARD_MEETING=${{ secrets.DEV_TRELLO_BOARD_MEETING }}
+          }"
+    
+  dev_get_trello_members:
+    needs: [test, lint]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 16
+      - uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ca-central-1
+          
+      - name: Zip lambda
+        run: zip -j dev_get_trello_members.zip ./lambdas/get_trello_members.py
+      
+      - name: Update lambda code
+        run: aws lambda update-function-code --function-name=dev_get_trello_members --zip-file=fileb://dev_get_trello_members.zip 
+      
+      - name: Delay before updating function code
+        run: sleep 15
+      
+      - name: Update lambda env secrets
+        run: |
+          aws lambda update-function-configuration --function-name dev_get_trello_members --environment "Variables={
+          TRELLO_KEY=${{ secrets.DEV_TRELLO_KEY }},
+          TRELLO_TOKEN=${{ secrets.DEV_TRELLO_TOKEN }},
+          TRELLO_ORGANIZATION=${{ secrets.DEV_TRELLO_ORGANIZATION }}
+          }"
+          
+  dev_create_user:
+    needs: [test, lint]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 16
+      - uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ca-central-1
+          
+      - name: Zip lambda
+        run: zip -j dev_create_user.zip ./lambdas/create_user.py
+      
+      - name: Update lambda code
+        run: aws lambda update-function-code --function-name=dev_create_user --zip-file=fileb://dev_create_user.zip 
+      
+      - name: Delay before updating function code
+        run: sleep 15
+      
+      - name: Update lambda env secrets
+        run: |
+          aws lambda update-function-configuration --function-name dev_create_user --environment "Variables={
+          TRELLO_KEY=${{ secrets.DEV_TRELLO_KEY }},
+          TRELLO_TOKEN=${{ secrets.DEV_TRELLO_TOKEN }},
+          TRELLO_ORGANIZATION=${{ secrets.DEV_TRELLO_ORGANIZATION }},
+          COGNITO_CLIENT_ID=${{ secrets.DEV_COGNITO_CLIENT_ID }},
+          BUZZHUB_ACCESS_CODE=${{ secrets.DEV_BUZZHUB_ACCESS_CODE }},
+          }"
+  
+  dev_login:
+    needs: [test, lint]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 16
+      - uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ca-central-1
+          
+      - name: Zip lambda
+        run: zip -j dev_login.zip ./lambdas/login.py
+      
+      - name: Update lambda code
+        run: aws lambda update-function-code --function-name=dev_login --zip-file=fileb://dev_login.zip 
+      
+      - name: Delay before updating function code
+        run: sleep 15
+      
+      - name: Update lambda env secrets
+        run: |
+          aws lambda update-function-configuration --function-name dev_login --environment "Variables={
+          COGNITO_CLIENT_ID=${{ secrets.DEV_COGNITO_CLIENT_ID }},
+          }"
+      

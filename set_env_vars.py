@@ -15,6 +15,7 @@ try:
         env_file.write("COLLECTIVE_BOARD_ID=61f889ff737a1d7b1031bb9d\n")
         env_file.write("TRELLO_KEY=mocked\n")
         env_file.write("TRELLO_TOKEN=mocked\n")
+        env_file.write("BUZZHUB_ACCESS_CODE=test\n")
     print("+++ Environment variables are set +++")
 except FileNotFoundError as e:
     print(f"+++ Error while setting the environment variable: {e} +++")

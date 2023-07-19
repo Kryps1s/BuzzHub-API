@@ -146,7 +146,6 @@ def mock_beekeeping_board():
   }
 ]
 
-
 def mock_collective_board():
     return [
   {
@@ -512,3 +511,4 @@ def mock_trello_members():
                  {'id': '535028c0831f2d8c5a6e12ca', 'fullName': 'marleym', 'username': 'marleym'}]
     #parse to json
     return data
+

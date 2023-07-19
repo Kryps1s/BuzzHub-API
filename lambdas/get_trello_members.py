@@ -13,6 +13,7 @@ invalid_members = ["585a7e82c8a3142c77cfb22e", "placeholder_buzzhub_user"]
 
 def fetch_members():
     """Fetch all members from the organization"""
+    #pylint: disable=R0801
     url = "https://api.trello.com/1/organizations/" + os.environ['TRELLO_ORGANIZATION'] + "/members"
     headers = {
     "Accept": "application/json"
