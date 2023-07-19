@@ -14,15 +14,15 @@ def lambda_handler(event, _):
                 'PASSWORD': event["arguments"]["password"]
             }
         )
-    except client.exceptions.NotAuthorizedException:
+    except client.exceptions.NotAuthorizedException as exc:
         print("Invalid credentials")
-        return {"error": "Invalid credentials"}
-    except client.exceptions.UserNotConfirmedException:
+        raise PermissionError("Invalid credentials") from exc
+    except client.exceptions.UserNotConfirmedException as exc:
         print("User not confirmed")
-        return {"error": "User not confirmed"}
-    except client.exceptions.UserNotFoundException:
+        raise PermissionError("User not confirmed") from exc
+    except client.exceptions.UserNotFoundException as exc:
         print("User not found")
-        return {"error": "User not found"}
+        raise LookupError("User not found") from exc
     #use access token to get user's details from cognito
     cognito_user = client.get_user(
         AccessToken=user["AuthenticationResult"]["AccessToken"]
