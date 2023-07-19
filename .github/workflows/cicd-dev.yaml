@@ -45,6 +45,9 @@ jobs:
       - name: Install dependencies
         run: |
           pip install pylint
+          pip install pytest
+          pip install boto3
+          pip install requests
         
       - name: linting
         run: pylint **/*.py
