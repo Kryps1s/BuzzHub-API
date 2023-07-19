@@ -12,7 +12,7 @@ def fixture_event():
             "email": "elliot@test.com",
             "password": "Password!2",
             "code" : "test",
-            "trello_id": "elliot",
+            "trello": "elliot",
             "first_name": "Elliot",
             "last_name": "Alderson"
 
@@ -69,11 +69,11 @@ def test_create_users_fail_invalid_code(mock_create_user,mock_fetch_members, eve
 #test for invalid trello id
 @patch('lambdas.create_user.fetch_members')
 @patch('lambdas.create_user.create_user')
-def test_create_users_fail_invalid_trello_id(mock_create_user,mock_fetch_members, event):
+def test_create_users_fail_invalid_trello(mock_create_user,mock_fetch_members, event):
     """ Test create_users fails when invalid trello id is provided """
     mock_create_user.return_value = "user created"
     mock_fetch_members.return_value = ["elliot"]
-    event['arguments']['trello_id'] = "elliot1"
+    event['arguments']['trello'] = "elliot1"
     result = lambda_handler(event, {})
     # Check the result
     assert result['error'] == 'Invalid trello id'

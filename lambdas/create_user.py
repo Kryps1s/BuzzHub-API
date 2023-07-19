@@ -40,7 +40,7 @@ def validate_user(user):
     error = None
     #pylint: disable=R0916
     if "first_name" not in user or "last_name" not in user or "email" not in user \
-    or "password" not in user or "trello_id" not in user or "code" not in user:
+    or "password" not in user or "trello" not in user or "code" not in user:
         error = {"error": "Missing field"}
     #check first and last name are at least 3 characters
     elif len(user["first_name"]) < 3 or len(user["last_name"]) < 3:
@@ -55,7 +55,7 @@ def validate_user(user):
         #pylint: disable=C0301
         error = {"error": "Password must be at least 8 characters, and contain at least one number, one uppercase letter, and one lowercase letter, and one special character"}
     #check trello id is valid
-    elif user["trello_id"] not in fetch_members():
+    elif user["trello"] not in fetch_members():
         error = {"error": "Invalid trello id"}
     elif user["code"] != os.environ['BUZZHUB_ACCESS_CODE']:
         error = {"error": "Invalid access code"}
@@ -76,7 +76,7 @@ def create_user(user):
                 },
                 {
                     'Name': 'custom:trello',
-                    'Value': user["trello_id"]
+                    'Value': user["trello"]
                 }
             ]
         )
