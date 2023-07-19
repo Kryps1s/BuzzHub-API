@@ -15,8 +15,8 @@ def fixture_event():
             "password": "Password!2",
             "code" : "test",
             "trello": "elliot",
-            "first_name": "Elliot",
-            "last_name": "Alderson"
+            "firstName": "Elliot",
+            "lastName": "Alderson"
 
         }
     }
@@ -93,7 +93,7 @@ def test_create_users_fail_invalid_first_name(mock_create_user,mock_fetch_member
     """ Test create_users fails when invalid first name is provided """
     mock_create_user.return_value = "user created"
     mock_fetch_members.return_value = ["elliot"]
-    event['arguments']['first_name'] = "El"
+    event['arguments']['firstName'] = "El"
     with pytest.raises(ValueError) as err:
         lambda_handler(event, {})
     # Check the result
@@ -106,7 +106,7 @@ def test_create_users_fail_invalid_last_name(mock_create_user,mock_fetch_members
     """ Test create_users fails when invalid last name is provided """
     mock_create_user.return_value = "user created"
     mock_fetch_members.return_value = ["elliot"]
-    event['arguments']['last_name'] = "Al"
+    event['arguments']['lastName'] = "Al"
     with pytest.raises(ValueError) as err:
         lambda_handler(event, {})
     # Check the result

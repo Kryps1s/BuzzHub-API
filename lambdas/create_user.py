@@ -38,10 +38,10 @@ def fetch_members():
 def validate_user(user):
     """Validate the user"""
     #pylint: disable=R1720 disable=R0916
-    if "first_name" not in user or "last_name" not in user or "email" not in user \
+    if "firstName" not in user or "lastName" not in user or "email" not in user \
     or "password" not in user or "trello" not in user or "code" not in user:
         raise ValueError("Missing field")
-    if len(user["first_name"]) < 3 or len(user["last_name"]) < 3:
+    if len(user["firstName"]) < 3 or len(user["lastName"]) < 3:
         raise ValueError("First and last name must be at least 3 characters")
     if not re.match(r"[^@]+@[^@]+\.[^@]+", user["email"]):
         raise ValueError("Invalid email")
@@ -65,7 +65,7 @@ def create_user(user):
             UserAttributes=[
                 {
                     'Name': 'name',
-                    'Value': user["first_name"] + " " + user["last_name"]
+                    'Value': user["firstName"] + " " + user["lastName"]
                 },
                 {
                     'Name': 'custom:trello',
