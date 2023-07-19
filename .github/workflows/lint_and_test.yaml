@@ -35,6 +35,43 @@ jobs:
       - name: testing
         run: pytest
 
+  update-lambda:
+    needs: lint-and-test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      # Loop through .py files in the directory
+      - name: List .py files
+        id: list-files
+        run: |
+          python_files=$(find ./lambdas -type f -name "*.py" -printf "%f\n")
+          echo ::set-output name=python_files::"$python_files"
+
+      # Split the list of files into an array
+      - name: Set Python Files Array
+        id: set-python-files
+        run: |
+          IFS=$'\n' read -rd '' -a python_files <<< "${{ steps.list-files.outputs.python_files }}"
+
+      # Loop through the array and run the job template for each .py file
+      - name: Update Lambda Functions
+        id: update-lambdas
+        run: |
+          for file in "${python_files[@]}"; do
+            LAMBDA_FUNCTION_NAME=$(basename "$file" .py)
+            echo "Updating Lambda function: $LAMBDA_FUNCTION_NAME"
+            echo "::set-output name=lambda_name::$LAMBDA_FUNCTION_NAME"
+          done
+
+      # Use the job template with the specific lambda name
+      - name: Update Lambda Function
+        uses: ./.github/actions/DEV-deploy-lambda-template.yaml
+        with:
+          LAMBDA_FUNCTION_NAME: ${{ needs.update-lambda.outputs.lambda_name }}
+
+
+
   # dev_get_event_by_id:
   #   needs: lint-and-test
   #   runs-on: ubuntu-latest
