@@ -82,9 +82,11 @@ def create_user(user):
 
 def lambda_handler(event, _):
     """Lambda handler"""
-    #get the user from the event
     #validate the user
-    user = event["arguments"]
+    #ensure input exists
+    if "arguments" not in event or "input" not in event["arguments"]:
+        raise ValueError("Missing field")
+    user = event["arguments"]["input"]
     try:
         validate_user(user)
     except ValueError as exc:

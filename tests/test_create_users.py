@@ -10,15 +10,16 @@ class TrelloAPIError(Exception):
 def fixture_event():
     """ Generates Appsync GraphQL Event"""
     return {
-        "arguments": {
+        "arguments":{
+            "input":{
             "email": "elliot@test.com",
             "password": "Password!2",
             "code" : "test",
             "trello": "elliot",
             "firstName": "Elliot",
             "lastName": "Alderson"
-
-        }
+            }
+        } 
     }
 
 @patch('lambdas.create_user.fetch_members')
@@ -38,7 +39,7 @@ def test_create_users_fail_no_email(mock_create_user,mock_fetch_members, event):
     """ Test create_users fails when no email is provided """
     mock_create_user.return_value = "user created"
     mock_fetch_members.return_value = ["elliot"]
-    del event['arguments']['email']
+    del event['arguments']['input']['email']
     with pytest.raises(ValueError) as err:
         lambda_handler(event, {})
     # Check the result
@@ -53,7 +54,7 @@ def test_create_users_fail_invalid_password(mock_create_user,mock_fetch_members,
     """ Test create_users fails when invalid password is provided """
     mock_create_user.return_value = "user created"
     mock_fetch_members.return_value = ["elliot"]
-    event['arguments']['password'] = "Password"
+    event['arguments']['input']['password'] = "Password"
     with pytest.raises(ValueError) as err:
         lambda_handler(event, {})
     # Check the result
@@ -67,7 +68,7 @@ def test_create_users_fail_invalid_code(mock_create_user,mock_fetch_members, eve
     """ Test create_users fails when invalid code is provided """
     mock_create_user.return_value = "user created"
     mock_fetch_members.return_value = ["elliot"]
-    event['arguments']['code'] = "test1"
+    event['arguments']['input']['code'] = "test1"
     with pytest.raises(ValueError) as err:
         lambda_handler(event, {})
     # Check the result
@@ -80,7 +81,7 @@ def test_create_users_fail_invalid_trello(mock_create_user,mock_fetch_members, e
     """ Test create_users fails when invalid trello id is provided """
     mock_create_user.return_value = "user created"
     mock_fetch_members.return_value = ["elliot"]
-    event['arguments']['trello'] = "elliot1"
+    event['arguments']['input']['trello'] = "elliot1"
     with pytest.raises(ValueError) as err:
         lambda_handler(event, {})
     # Check the result
@@ -93,7 +94,7 @@ def test_create_users_fail_invalid_first_name(mock_create_user,mock_fetch_member
     """ Test create_users fails when invalid first name is provided """
     mock_create_user.return_value = "user created"
     mock_fetch_members.return_value = ["elliot"]
-    event['arguments']['firstName'] = "El"
+    event['arguments']['input']['firstName'] = "El"
     with pytest.raises(ValueError) as err:
         lambda_handler(event, {})
     # Check the result
@@ -106,7 +107,7 @@ def test_create_users_fail_invalid_last_name(mock_create_user,mock_fetch_members
     """ Test create_users fails when invalid last name is provided """
     mock_create_user.return_value = "user created"
     mock_fetch_members.return_value = ["elliot"]
-    event['arguments']['lastName'] = "Al"
+    event['arguments']['input']['lastName'] = "Al"
     with pytest.raises(ValueError) as err:
         lambda_handler(event, {})
     # Check the result
@@ -119,7 +120,7 @@ def test_create_users_fail_invalid_email(mock_create_user,mock_fetch_members, ev
     """ Test create_users fails when invalid email is provided """
     mock_create_user.return_value = "user created"
     mock_fetch_members.return_value = ["elliot"]
-    event['arguments']['email'] = "elliot@test"
+    event['arguments']['input']['email'] = "elliot@test"
     with pytest.raises(ValueError) as err:
         lambda_handler(event, {})
     # Check the result
