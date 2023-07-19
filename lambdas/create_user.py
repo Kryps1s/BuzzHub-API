@@ -87,6 +87,7 @@ def lambda_handler(event, _):
     if "arguments" not in event or "input" not in event["arguments"]:
         raise ValueError("Missing field")
     user = event["arguments"]["input"]
+    print(user)
     try:
         validate_user(user)
     except ValueError as exc:
