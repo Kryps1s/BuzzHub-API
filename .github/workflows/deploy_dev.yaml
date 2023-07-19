@@ -3,7 +3,6 @@ name: Deploy to Develop
 on:
   workflow_run:
     workflows: [Lint and Test]
-    branches: [develop]
     types:
       - completed
 
