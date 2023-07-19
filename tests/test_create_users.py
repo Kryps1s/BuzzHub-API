@@ -19,7 +19,7 @@ def fixture_event():
             "firstName": "Elliot",
             "lastName": "Alderson"
             }
-        } 
+        }
     }
 
 @patch('lambdas.create_user.fetch_members')
