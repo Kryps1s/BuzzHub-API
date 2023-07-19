@@ -76,9 +76,10 @@ def create_user(user):
         #print to cloudwatch logs
         print("user created" + user["email"])
         return user["email"]
+
     except ClientError as err:
-        print(err)
-        return {"error": str(err)}
+        print(err.response["message"])
+        raise ValueError(err.response["message"]) from err
 
 def lambda_handler(event, _):
     """Lambda handler"""
@@ -93,5 +94,9 @@ def lambda_handler(event, _):
     except ValueError as exc:
         # If any validation error occurs, raise the specific exception with the error message
         raise exc
-
-    return create_user(user)
+    try:
+        created = create_user(user)
+        return created
+    except ValueError as exc:
+        # If any validation error occurs, raise the specific exception with the error message
+        raise exc
