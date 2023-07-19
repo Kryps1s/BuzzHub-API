@@ -1,10 +1,14 @@
 name: Deploy to Develop
 
 on:
-  workflow_run: ["Lint and Test"]
-  branches: ["develop"]
-  types:
-    - completed
+  workflow_run:
+    workflows:
+      - "Lint and Test"
+    branches:
+      - develop
+    types:
+      - completed
+
 jobs:
 
   load:
