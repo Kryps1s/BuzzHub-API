@@ -95,7 +95,7 @@ jobs:
         run: |
           aws lambda update-function-configuration --function-name dev_get_events --environment "Variables={
           TRELLO_KEY=${{ secrets.DEV_TRELLO_KEY }},
-          TRELLO_TOKEN=${{ secrets.DEV_RELLO_TOKEN }},
+          TRELLO_TOKEN=${{ secrets.DEV_TRELLO_TOKEN }},
           BEEKEEPING_BOARD_ID=${{ secrets.DEV_BEEKEEPING_BOARD_ID }},
           COLLECTIVE_BOARD_ID=${{ secrets.DEV_COLLECTIVE_BOARD_ID }},
           MEETING_BOARD_ID=${{ secrets.DEV_MEETING_BOARD_ID }},

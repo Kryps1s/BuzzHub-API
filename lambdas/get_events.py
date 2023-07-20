@@ -44,7 +44,7 @@ def fetch_events(board_id):
     timeout=30
     )
     if response.ok is False:
-        raise TrelloAPIError("Trello API error: " + response['error'])
+        raise TrelloAPIError("Trello API error: " + response.text)
     #remove cards with no due date
     cards = [card for card in response.json() if card['due'] is not None]
     return cards
