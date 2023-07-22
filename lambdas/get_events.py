@@ -44,15 +44,15 @@ def fetch_events(board_id):
     timeout=30
     )
     if response.ok is False:
-        raise TrelloAPIError("Trello API error: " + response['error'])
+        raise TrelloAPIError("Trello API error: " + response.text)
     #remove cards with no due date
     cards = [card for card in response.json() if card['due'] is not None]
     return cards
 
-
 def map_beekeeping_event(event, card):
     """Map trello card to beekeeping event"""
     event['__typename'] = "BeekeepingEvent"
+    event['type'] = "BEEKEEPING"
     event['jobs'] = []
     event['hives'] = []
     event['roles'] = []
@@ -61,7 +61,6 @@ def map_beekeeping_event(event, card):
         roles = json.loads(card['desc'].split("}")[0] + "}")
         #add roles to event
         event['roles'].append(roles)
-    event['type'] = "BEEKEEPING"
     #loop through labels
     for label in card['labels']:
         #if label name starts with job or hive, add to event array
@@ -70,6 +69,8 @@ def map_beekeeping_event(event, card):
         elif label['name'].startswith("hive"):
             event['hives'].append(label['name'].split("hive:")[1])
     return event
+
+
 
 def map_card_to_event(event_type, cards):
     """Map trello card to event"""

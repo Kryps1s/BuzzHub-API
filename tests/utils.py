@@ -146,7 +146,6 @@ def mock_beekeeping_board():
   }
 ]
 
-
 def mock_collective_board():
     return [
   {
@@ -445,7 +444,7 @@ def mock_trello_card():
   "due": "2023-07-14T16:00:00.000Z",
   "dueReminder": -1,
   "email": None,
-  "idBoard": "61f889ff737a1d7b1031bb9d",
+  "idBoard": "626194d91594996f726b6838",
   "idChecklists": [
     "64a33572f7dffd4559b77437",
     "64a33572f7dffd4559b77435",
@@ -499,3 +498,17 @@ def mock_trello_card():
   "isTemplate": False,
   "cardRole": None
 }
+
+def mock_trello_members():
+    data = [{'id': '5e6a57617b6a8f865837b846', 'fullName': 'Aleksandra K', 'username': 'aleksandrak39'}, {'id': '64205f5e3e4ed46f0013bd51', 'fullName': 'Asmaa Beaury', 'username': 'asmaabeaury'}, {'id': '6425c215cc9f00da98155c45', 'fullName': 'Audrey Steiner', 'username': 'audreysteiner'}, {'id': '625cca736c2f058c546c8111', 'fullName': 'Bakar Amara', 'username': 'bakaramara'},
+             {'id': '625f6e9e6922e141bf05fae2', 'fullName': 'Camille', 'username': 'camillethompson8'}, {'id': '6429847ad18a08f04c401fb7', 'fullName': 'Doug Turner', 'username': 'dougturner45'}, 
+             {'id': '626194d4c9873f601f82fd0f', 'fullName': "Elliot O'Reilly", 'username': 'elliotoreilly'}, {'id': '62602ead27ba1a4f5b2a1828', 'fullName': 'e.dimanche', 'username': 'elyse_dimanche'},
+             {'id': '605337f45554c43240c8da2f', 'fullName': 'Ginette Petit', 'username': 'ginettepetit3'}, {'id': '644ae24c906fa0b6c72e76b8', 'fullName': 'Izzy', 'username': 'izzy24768109'}, 
+             {'id': '64260e49b694bbb2b4e31501', 'fullName': 'James Mourani', 'username': 'jmourani1'}, {'id': '5e5fc0313e86098bb5574363', 'fullName': 'Johanna Tzountzouris', 'username': 'johannatzountzouris1'},
+               {'id': '5fb5273568132b0e5531682d', 'fullName': 'Johnny', 'username': 'jox62981167'}, {'id': '59c3f0792c3f1559de773372', 'fullName': 'Lafortune Arnaud', 'username': 'lafortunearnaud1'},
+                 {'id': '5f808652cb6e1333694ea129', 'fullName': 'Marie-Anne Viau', 'username': 'marieanneviau'}, {'id': '6425bff72cbde0711abd4ec2', 'fullName': 'Nicola McColl', 'username': 'nicolamccoll'}, 
+                 {'id': '64389a7ea19830af9c915dd9', 'fullName': 'Sarah Breger', 'username': 'sbreg2'}, {'id': '6260cc2fcd6e1f7c16ca5bdf', 'fullName': 'Viv Walz', 'username': 'vivwalz'}, 
+                 {'id': '535028c0831f2d8c5a6e12ca', 'fullName': 'marleym', 'username': 'marleym'}]
+    #parse to json
+    return data
+

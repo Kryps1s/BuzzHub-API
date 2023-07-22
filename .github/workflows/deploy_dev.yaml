@@ -1,40 +1,54 @@
-name: Deploy to Develop
+# name: Deploy to Develop
 
-on:
-  pull_request:
-    branches:
-      - develop
-jobs:
-  get_event_by_id:
-    if: github.ref == 'refs/heads/develop'
-    needs: lint-and-test
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
-        with:
-          node-version: 16
-      - uses: aws-actions/configure-aws-credentials@v2
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: ca-central-1
-      - run: zip -j dev_get_event_by_id.zip ./lambdas/get_event_by_id.py
-      - run: aws lambda update-function-code --function-name=dev_get_event_by_id --zip-file=fileb://dev_get_event_by_id.zip
- 
-  get_events:
-    if: github.ref == 'refs/heads/develop'
-    needs: lint-and-test
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
-        with:
-          node-version: 16
-      - uses: aws-actions/configure-aws-credentials@v2
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: ca-central-1
-      - run: zip -j dev_get_events.zip ./lambdas/get_events.py
-      - run: aws lambda update-function-code --function-name=dev_get_events --zip-file=fileb://dev_get_events.zip
+# on:
+#   workflow_run:
+#     workflows: [Lint and Test]
+#     types:
+#       - completed
+
+# jobs:
+
+#   load:
+#     runs-on: ubuntu-latest
+
+#     steps:
+#       - name: load
+#         run: sleep 1
+
+     
+#   update-lambda:
+#     if: github.event.workflow_run.conclusion == 'success'
+#     name: Update Lambda functions
+#     needs: lint-and-test
+#     runs-on: ubuntu-latest
+#     steps:
+#       - uses: actions/checkout@v3
+
+#       # Loop through .py files in the directory
+#       - name: List .py files
+#         id: list-files
+#         run: |
+#           python_files=$(find ./lambdas -type f -name "*.py" -printf "%f\n")
+#           echo ::set-output name=python_files::"$python_files"
+
+#       # Split the list of files into an array
+#       - name: Set Python Files Array
+#         id: set-python-files
+#         run: |
+#           IFS=$'\n' read -rd '' -a python_files <<< "${{ steps.list-files.outputs.python_files }}"
+
+#       # Loop through the array and run the job template for each .py file
+#       - name: Update Lambda Functions
+#         id: update-lambdas
+#         run: |
+#           for file in "${python_files[@]}"; do
+#             LAMBDA_FUNCTION_NAME=$(basename "$file" .py)
+#             echo "Updating Lambda function: $LAMBDA_FUNCTION_NAME"
+#             echo "::set-output name=lambda_name::$LAMBDA_FUNCTION_NAME"
+#           done
+
+#       # Use the job template with the specific lambda name
+#       - name: Update Lambda Function
+#         uses: ./.github/actions/DEV-deploy-lambda-template.yaml
+#         with:
+#           LAMBDA_FUNCTION_NAME: ${{ needs.update-lambda.outputs.lambda_name }}
