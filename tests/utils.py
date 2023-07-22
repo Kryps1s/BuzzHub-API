@@ -444,7 +444,7 @@ def mock_trello_card():
   "due": "2023-07-14T16:00:00.000Z",
   "dueReminder": -1,
   "email": None,
-  "idBoard": "61f889ff737a1d7b1031bb9d",
+  "idBoard": "626194d91594996f726b6838",
   "idChecklists": [
     "64a33572f7dffd4559b77437",
     "64a33572f7dffd4559b77435",
