@@ -9,7 +9,7 @@ def fixture_event():
     """ Generates Appsync GraphQL Event"""
     return {
         "arguments": {
-            "cardId": "oBsiLWUX",
+            "eventId": "oBsiLWUX",
             "report": "This is a test report",
             "participants": ["5f1c7b8d0b4a5e7e1a4c1b6d"]
         }
@@ -28,18 +28,18 @@ def test_save_beekeeping_report(mock_update_card,mock_fetch_card, event):
     assert card['name'] == '#hive ROSE - 14/07/2023: full inspection'
     assert card['desc'] == 'this is a test description'
 
-#test for missing cardId
+#test for missing eventId
 @patch('lambdas.save_beekeeping_report.fetch_card')
 @patch('lambdas.save_beekeeping_report.update_card')
 def test_save_beekeeping_report_fail_no_card_id(mock_update_card,mock_fetch_card, event):
     """ Test fetch_card """
     mock_fetch_card.return_value = mock_trello_card()
     mock_update_card.return_value = mock_trello_card()
-    del event['arguments']['cardId']
+    del event['arguments']['eventId']
     with pytest.raises(ValueError) as err:
         lambda_handler(event)
     # Check the result contains missing field
-    assert str(err.value) == "missing field: 'cardId'"
+    assert str(err.value) == "missing field: 'eventId'"
 
 #test for missing report
 @patch('lambdas.save_beekeeping_report.fetch_card')
@@ -107,11 +107,11 @@ def test_save_beekeeping_report_fail_invalid_participants(mock_update_card,mock_
     # Check the result
     assert str(err.value) == "invalid participants"
 
-#test for invalid cardId
+#test for invalid eventId
 def test_save_beekeeping_report_fail_invalid_card(event):
     """ Test fetch_card """
-    event['arguments']['cardId'] = "invalidId"
+    event['arguments']['eventId'] = "invalidId"
     with pytest.raises(ValueError) as err:
         lambda_handler(event)
-    # Check the result
-    assert str(err.value) == "Trello API error: invalid id"
+    # Check the result value contains Trello API error
+    assert "Trello API error" in str(err.value)

@@ -12,7 +12,7 @@ def lambda_handler(event):
     except ValueError as err:
         raise ValueError(str(err)) from err
     #get card id from event
-    card_id = event['arguments']['cardId']
+    card_id = event['arguments']['eventId']
     #get report from event
     report = event['arguments']['report']
     #get the participants from event
@@ -113,8 +113,8 @@ def validate_event(event):
     #check if arguments is a dict
     if not isinstance(event['arguments'], dict):
         return False
-    #check if cardId is a string
-    if not isinstance(event['arguments']['cardId'], str):
+    #check if eventId is a string
+    if not isinstance(event['arguments']['eventId'], str):
         return False
     #check if report is a string
     if not isinstance(event['arguments']['report'], str):
