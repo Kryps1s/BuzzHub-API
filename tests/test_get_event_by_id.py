@@ -9,7 +9,7 @@ def fixture_event():
     """ Generates Appsync GraphQL Event"""
     return {
         "arguments": {
-            "eventId": "oBsiLXUW"
+            "eventId": "oBsiLWUX"
         }
     }
 
@@ -22,7 +22,7 @@ def test_get_event_by_id(mock_fetch_event, event):
     # Call the function
     result = lambda_handler(event, {})
     # Check the result
-    assert result['eventId'] == 'oBsiLXUW'
+    assert result['eventId'] == 'oBsiLWUX'
 
 #test fail scenario
 @patch('lambdas.get_event_by_id.fetch_event')
