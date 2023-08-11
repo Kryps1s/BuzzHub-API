@@ -22,11 +22,9 @@ def test_save_beekeeping_report(mock_update_card,mock_fetch_card, event):
     """ Test fetch_card """
     mock_fetch_card.return_value = mock_trello_card()
     mock_update_card.return_value = mock_trello_card()
-    card = lambda_handler(event)
+    message = lambda_handler(event)
     # Check the result
-    assert card['shortLink'] == 'oBsiLWUX'
-    assert card['name'] == '#hive ROSE - 14/07/2023: full inspection'
-    assert card['desc'] == 'this is a test description'
+    assert message == {'message': 'successfully saved report'}
 
 #test for missing eventId
 @patch('lambdas.save_beekeeping_report.fetch_card')
