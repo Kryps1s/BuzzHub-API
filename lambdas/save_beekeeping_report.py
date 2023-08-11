@@ -2,7 +2,7 @@
 import os
 import requests
 
-def lambda_handler(event):
+def lambda_handler(event, _):
     """Lambda handler"""
     #validate event
     try:
@@ -36,7 +36,7 @@ def lambda_handler(event):
     card['idList'] = os.environ['BEEKEEPING_LIST_COMPLETED']
     #update card
     card = update_card(card)
-    return card
+    return {"message": "successfully saved report"}
 
 def fetch_card(card_id):
     """fetch card from trello"""

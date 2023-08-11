@@ -24,17 +24,8 @@ def lambda_handler(event, _):
     except client.exceptions.UserNotFoundException as exc:
         print("User not found")
         raise LookupError("User not found") from exc
-    #use access token to get user's details from cognito
-    cognito_user = client.get_user(
-        AccessToken=user["AuthenticationResult"]["AccessToken"]
-    )
-    #build the response
-    cognito_user = {
-        #iterate over cognito user attributes and add them to the user object
-        attribute["Name"]: attribute["Value"] for attribute in cognito_user["UserAttributes"]
-        }
+
     #return the user's access and refresh tokens, as well as their cognito name and trello id
     return {
-        "access_token": user["AuthenticationResult"]["AccessToken"],
-        "name": cognito_user["name"],
-        }
+        "access_token": user["AuthenticationResult"]["AccessToken"]
+    }
