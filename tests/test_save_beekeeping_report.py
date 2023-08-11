@@ -22,7 +22,7 @@ def test_save_beekeeping_report(mock_update_card,mock_fetch_card, event):
     """ Test fetch_card """
     mock_fetch_card.return_value = mock_trello_card()
     mock_update_card.return_value = mock_trello_card()
-    message = lambda_handler(event)
+    message = lambda_handler(event,{})
     # Check the result
     assert message == {'message': 'successfully saved report'}
 
@@ -35,7 +35,7 @@ def test_save_beekeeping_report_fail_no_card_id(mock_update_card,mock_fetch_card
     mock_update_card.return_value = mock_trello_card()
     del event['arguments']['eventId']
     with pytest.raises(ValueError) as err:
-        lambda_handler(event)
+        lambda_handler(event,{})
     # Check the result contains missing field
     assert str(err.value) == "missing field: 'eventId'"
 
@@ -48,7 +48,7 @@ def test_save_beekeeping_report_fail_no_report(mock_update_card,mock_fetch_card,
     mock_update_card.return_value = mock_trello_card()
     del event['arguments']['report']
     with pytest.raises(ValueError) as err:
-        lambda_handler(event)
+        lambda_handler(event,{})
     # Check the result
     assert str(err.value) == "missing field: 'report'"
 
@@ -61,7 +61,7 @@ def test_save_beekeeping_report_fail_no_participants(mock_update_card,mock_fetch
     mock_update_card.return_value = mock_trello_card()
     del event['arguments']['participants']
     with pytest.raises(ValueError) as err:
-        lambda_handler(event)
+        lambda_handler(event,{})
     # Check the result
     assert str(err.value) == "missing field: 'participants'"
 
@@ -74,7 +74,7 @@ def test_save_beekeeping_report_fail_invalid_report(mock_update_card,mock_fetch_
     mock_update_card.return_value = mock_trello_card()
     event['arguments']['report'] = 11
     with pytest.raises(ValueError) as err:
-        lambda_handler(event)
+        lambda_handler(event,{})
     # Check the result
     assert str(err.value) == "invalid report"
 
@@ -87,7 +87,7 @@ def test_save_beekeeping_report_fail_empty_participants(mock_update_card,mock_fe
     mock_update_card.return_value = mock_trello_card()
     event['arguments']['participants'] = []
     with pytest.raises(ValueError) as err:
-        lambda_handler(event)
+        lambda_handler(event,{})
     # Check the result
     assert str(err.value) == "there must be at least one attendee"
 
@@ -101,7 +101,7 @@ def test_save_beekeeping_report_fail_invalid_participants(mock_update_card,mock_
     #participant index are objects
     event['arguments']['participants'] = [{"id": "5f1c7b8d", "name": "John Doe", "email": ""}]
     with pytest.raises(ValueError) as err:
-        lambda_handler(event)
+        lambda_handler(event,{})
     # Check the result
     assert str(err.value) == "invalid participants"
 
@@ -110,6 +110,6 @@ def test_save_beekeeping_report_fail_invalid_card(event):
     """ Test fetch_card """
     event['arguments']['eventId'] = "invalidId"
     with pytest.raises(ValueError) as err:
-        lambda_handler(event)
+        lambda_handler(event,{})
     # Check the result value contains Trello API error
     assert "Trello API error" in str(err.value)
