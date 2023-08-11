@@ -2,7 +2,7 @@
 import os
 import requests
 
-def lambda_handler(event):
+def lambda_handler(event, _):
     """Lambda handler"""
     #validate event
     try:
