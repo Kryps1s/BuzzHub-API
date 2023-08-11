@@ -14,6 +14,7 @@ def lambda_handler(event, _):
                 'PASSWORD': event["arguments"]["password"]
             }
         )
+    #respond to reset password challenge
     except client.exceptions.NotAuthorizedException as exc:
         print("Invalid credentials")
         raise PermissionError("Invalid credentials") from exc
@@ -35,8 +36,5 @@ def lambda_handler(event, _):
     #return the user's access and refresh tokens, as well as their cognito name and trello id
     return {
         "access_token": user["AuthenticationResult"]["AccessToken"],
-        "refresh_token": user["AuthenticationResult"]["RefreshToken"],
         "name": cognito_user["name"],
-        "trello": cognito_user["custom:trello"],
-        "email": cognito_user["email"]
-    }
+        }
