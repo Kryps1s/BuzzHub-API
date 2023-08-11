@@ -8,9 +8,6 @@ import os
 import json
 import requests
 
-
-TABLE_NAME = os.environ['env']+"_calendar"
-
 def is_valid_json(json_str):
     """Check if string is valid json"""
     try:
