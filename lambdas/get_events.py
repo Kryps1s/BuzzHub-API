@@ -49,6 +49,52 @@ def fetch_events(board_id):
     cards = [card for card in response.json() if card['due'] is not None]
     return cards
 
+def fetch_members():
+    """Fetch all members from the organization"""
+    #pylint: disable=R0801
+    url = "https://api.trello.com/1/organizations/" + os.environ['TRELLO_ORGANIZATION'] + "/members"
+    headers = {
+    "Accept": "application/json"
+    }
+    query = {
+    'key': os.environ['TRELLO_KEY'],
+    'token': os.environ['TRELLO_TOKEN']
+    }
+    response = requests.request(
+    "GET",
+    url,
+    headers=headers,
+    params=query,
+    timeout=30
+    )
+    if response.ok is False:
+        raise TrelloAPIError("Trello API error: " + response['error'])
+    #filter invalid members from list of invalid members
+    members = list(response.json())
+    return members
+
+def map_meeting_event(event, card, members):
+    """Map trello card to meeting event"""
+    event['__typename'] = "MeetingEvent"
+    event['roles'] = []
+    #check if label starting with MONTHLY is present
+    for label in card['labels']:
+        if label['name'].startswith("MONTHLY"):
+            event['isMonthly'] = True
+        if label['name'] == "ONLINE":
+            event['location'] = "ONLINE"
+        if label['name'] == "IN-PERSON":
+            event['location'] = "IN-PERSON"
+    desc = card['desc'].split("\n\n")
+    for line in desc:
+        if line.startswith("📣"):
+            event['roles'].append(process_role_line(line, "Facilitator",members))
+        elif line.startswith("🔧"):
+            event['roles'].append(process_role_line(line, "Jockey",members))
+        elif line.startswith("✏️"):
+            event['roles'].append(process_role_line(line, "Scribe",members))
+    return event
+
 def map_beekeeping_event(event, card):
     """Map trello card to beekeeping event"""
     event['__typename'] = "BeekeepingEvent"
@@ -70,9 +116,16 @@ def map_beekeeping_event(event, card):
             event['hives'].append(label['name'].split("hive:")[1])
     return event
 
+def process_role_line(line, role_name, members):
+    """Process role line"""
+    #find the string that starts with an @ and ends with a space
+    username = line.split("@")[1].split(" ")[0]
+    member = next((member for member in members if member['username'] == username),None)
+    if member:
+        return {'roleName': role_name, 'user': member}
+    return {'roleName': role_name, 'user': {'username': username}}
 
-
-def map_card_to_event(event_type, cards):
+def map_card_to_event(members, event_type, cards):
     """Map trello card to event"""
     events = []
     for card in cards:
@@ -88,15 +141,7 @@ def map_card_to_event(event_type, cards):
             if len(event['jobs']) > 0:
                 events.append(event)
         elif event_type == "MEETING":
-            event['__typename'] = "MeetingEvent"
-            #check if label starting with MONTHLY is present
-            for label in card['labels']:
-                if label['name'].startswith("MONTHLY"):
-                    event['isMonthly'] = True
-                if label['name'] == "ONLINE":
-                    event['location'] = "ONLINE"
-                if label['name'] == "IN-PERSON":
-                    event['location'] = "IN-PERSON"
+            event = map_meeting_event(event, card, members)
             events.append(event)
         else:
             event['__typename'] = "CollectiveEvent"
@@ -198,20 +243,22 @@ def lambda_handler(event, _):
         is_monthly = arguments.get('isMonthly')
         jobs = arguments.get('jobs')
         hives = arguments.get('hives')
-
+        members = fetch_members()
         if event_type is not None:
             for event_type in event['arguments']['type']:
                 if event_type in trello_boards:
                     board_id = trello_boards[event_type]
                     events.append({'type': event_type,\
-                                   'events': map_card_to_event(event_type, fetch_events(board_id))})
+                                   'events': map_card_to_event(members, event_type, \
+                                                               fetch_events(board_id))})
                 else:
                     raise InvalidInputError("Invalid type: " + event_type)
         else: #if no type is specified, get all types
             for event_type, board_id in trello_boards.items():
                 event['type'] = event_type
                 events.append({'type': event_type,\
-                               'events': map_card_to_event(event_type, fetch_events(board_id))})
+                               'events': map_card_to_event(members, event_type,\
+                                                            fetch_events(board_id))})
         #type specific filters
         for item in events:
             if item["type"] == "BEEKEEPING":
