@@ -285,7 +285,7 @@ def mock_meeting_board():
     "closed": False,
     "dueComplete": True,
     "dateLastActivity": "2023-07-12T16:59:17.785Z",
-    "desc": "",
+    "desc": '📣Facilitator: @elliotoreilly ajsd;fkjasfdk\n\n🔧Jockey: @elliotoreilly\n\n✏️Scribe: @elliotoreilly',
     "descData": {
       "emoji": {}
     },
@@ -363,7 +363,7 @@ def mock_meeting_board():
     "closed": False,
     "dueComplete": False,
     "dateLastActivity": "2023-07-12T14:13:52.987Z",
-    "desc": "",
+    "desc": '📣Facilitator: @elliotoreilly\n\n🔧Jockey: @elliotoreilly\n\n✏️Scribe: @elliotoreilly',
     "descData": {
       "emoji": {}
     },
