@@ -115,6 +115,7 @@ jobs:
           aws lambda update-function-configuration --function-name prod_get_events --environment "Variables={
           TRELLO_KEY=${{ secrets.PROD_TRELLO_KEY }},
           TRELLO_TOKEN=${{ secrets.PROD_TRELLO_TOKEN }},
+          TRELLO_ORGANIZATION=${{ secrets.PROD_TRELLO_ORGANIZATION }},
           BEEKEEPING_BOARD_ID=${{ secrets.PROD_BEEKEEPING_BOARD_ID }},
           COLLECTIVE_BOARD_ID=${{ secrets.PROD_COLLECTIVE_BOARD_ID }},
           MEETING_BOARD_ID=${{ secrets.PROD_MEETING_BOARD_ID }},
