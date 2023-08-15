@@ -300,6 +300,13 @@ def test_get_events_all_arguments_roles(mock_fetch_events, event):
 
     # Call the function
     result = lambda_handler(event, {})
-    # Check roles are returned
+    # Check roles are returned and there is a roleName with jockey, facilitator, and scribe
+    roles = ["Jockey", "Facilitator", "Scribe"]
     for item in result:
         assert 'roles' in item
+        assert 'roleName' in item['roles'][0]
+        assert 'roleName' in item['roles'][1]
+        assert 'roleName' in item['roles'][2]
+        assert item['roles'][0]['roleName'] in roles
+        assert item['roles'][1]['roleName'] in roles
+        assert item['roles'][2]['roleName'] in roles

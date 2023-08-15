@@ -285,7 +285,7 @@ def mock_meeting_board():
     "closed": False,
     "dueComplete": True,
     "dateLastActivity": "2023-07-12T16:59:17.785Z",
-    "desc": '📣Facilitator: @elliotoreilly\n\n🔧Jockey: @elliotoreilly\n\n✏️Scribe: @elliotoreilly',
+    "desc": '📣Facilitator: @elliotoreilly ajsd;fkjasfdk\n\n🔧Jockey: @elliotoreilly\n\n✏️Scribe: @elliotoreilly',
     "descData": {
       "emoji": {}
     },

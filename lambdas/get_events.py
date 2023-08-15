@@ -70,7 +70,7 @@ def fetch_members():
     if response.ok is False:
         raise TrelloAPIError("Trello API error: " + response['error'])
     #filter invalid members from list of invalid members
-    members = [user for user in response.json()]
+    members = list(response.json())
     return members
 
 def map_meeting_event(event, card, members):
@@ -85,7 +85,7 @@ def map_meeting_event(event, card, members):
             event['location'] = "ONLINE"
         if label['name'] == "IN-PERSON":
             event['location'] = "IN-PERSON"
-            desc = card['desc'].split("\n\n")
+    desc = card['desc'].split("\n\n")
     for line in desc:
         if line.startswith("📣"):
             event['roles'].append(process_role_line(line, "Facilitator",members))
@@ -118,7 +118,8 @@ def map_beekeeping_event(event, card):
 
 def process_role_line(line, role_name, members):
     """Process role line"""
-    username = line.split(":")[1].strip().replace("@", "")
+    #find the string that starts with an @ and ends with a space
+    username = line.split("@")[1].split(" ")[0]
     member = next((member for member in members if member['username'] == username),None)
     if member:
         return {'roleName': role_name, 'user': member}
@@ -272,11 +273,3 @@ def lambda_handler(event, _):
         events = [event for item in events for event in item['events']]
         events = filter_events_by_date_range(events, date_range)
     return events
-
-ev = {
-    "arguments": {
-        "type": ["MEETING"],
-        "limit": 3,
-        "future": True,
-    }
-}
