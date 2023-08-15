@@ -5,7 +5,8 @@ from collections import Counter
 from unittest.mock import patch
 import pytest
 from lambdas.get_events import lambda_handler
-from .utils import mock_beekeeping_board, mock_collective_board, mock_meeting_board
+from .utils import mock_beekeeping_board, mock_collective_board,\
+      mock_meeting_board, mock_trello_members
 
 @pytest.fixture(name='event')
 def fixture_event():
@@ -14,9 +15,12 @@ def fixture_event():
         "arguments": {}
     }
 
+
+
 #test_get_events.py
+@patch('lambdas.get_events.fetch_members')
 @patch('lambdas.get_events.fetch_events')
-def test_get_events(mock_fetch_events, event):
+def test_get_events(mock_fetch_events, mock_fetch_members, event):
     """Test get_events function"""
     # Configure the mock behavior
     def side_effect(board_id):
@@ -28,12 +32,14 @@ def test_get_events(mock_fetch_events, event):
             return mock_collective_board()
         return []
     mock_fetch_events.side_effect = side_effect
+    mock_fetch_members.return_value = mock_trello_members()
     result = lambda_handler(event, {})
     assert len(result) == 4
 
 #test_get_events returns the limited number of events
+@patch('lambdas.get_events.fetch_members')
 @patch('lambdas.get_events.fetch_events')
-def test_get_events_limit(mock_fetch_events, event):
+def test_get_events_limit(mock_fetch_events, mock_fetch_members, event):
     """Test get_events function with limit"""
     # Configure the mock behavior
     def side_effect(board_id):
@@ -45,6 +51,7 @@ def test_get_events_limit(mock_fetch_events, event):
             return mock_collective_board()
         return []
     mock_fetch_events.side_effect = side_effect
+    mock_fetch_members.return_value = mock_trello_members()
     event['arguments']['limit'] = 2
     # Call the function
     result = lambda_handler(event, {})
@@ -55,8 +62,9 @@ def test_get_events_limit(mock_fetch_events, event):
         assert event_counts[event_type] <= 2
 
 #test_get_events returns the events in the future
+@patch('lambdas.get_events.fetch_members')
 @patch('lambdas.get_events.fetch_events')
-def test_get_events_future(mock_fetch_events, event):
+def test_get_events_future(mock_fetch_events, mock_fetch_members, event):
     """Test get_events function with future events"""
     # Configure the mock behavior
     def side_effect(board_id):
@@ -68,6 +76,7 @@ def test_get_events_future(mock_fetch_events, event):
             return mock_collective_board()
         return []
     mock_fetch_events.side_effect = side_effect
+    mock_fetch_members.return_value = mock_trello_members()
     event['arguments']['future'] = True
     # Call the function
     result = lambda_handler(event, {})
@@ -76,8 +85,9 @@ def test_get_events_future(mock_fetch_events, event):
         assert item['start'] > datetime.datetime.now().isoformat()
 
 #test_get_events returns the events in the past
+@patch('lambdas.get_events.fetch_members')
 @patch('lambdas.get_events.fetch_events')
-def test_get_events_past(mock_fetch_events, event):
+def test_get_events_past(mock_fetch_events, mock_fetch_members, event):
     """Test get_events function with past events"""
     # Configure the mock behavior
     def side_effect(board_id):
@@ -89,6 +99,7 @@ def test_get_events_past(mock_fetch_events, event):
             return mock_collective_board()
         return []
     mock_fetch_events.side_effect = side_effect
+    mock_fetch_members.return_value = mock_trello_members()
     event['arguments']['future'] = False
     # Call the function
     result = lambda_handler(event, {})
@@ -98,8 +109,9 @@ def test_get_events_past(mock_fetch_events, event):
 
 
 #test_get_events returns the events of selected type
+@patch('lambdas.get_events.fetch_members')
 @patch('lambdas.get_events.fetch_events')
-def test_get_events_type(mock_fetch_events, event):
+def test_get_events_type(mock_fetch_events, mock_fetch_members, event):
     """Test get_events function with type"""
     # Configure the mock behavior
     def side_effect(board_id):
@@ -111,6 +123,7 @@ def test_get_events_type(mock_fetch_events, event):
             return mock_collective_board()
         return []
     mock_fetch_events.side_effect = side_effect
+    mock_fetch_members.return_value = mock_trello_members()
     event['arguments']['type'] = ['MEETING']
     # Call the function
     result = lambda_handler(event, {})
@@ -119,8 +132,9 @@ def test_get_events_type(mock_fetch_events, event):
         assert item['type'] == 'MEETING'
 
 #test_get_events returns the events of selected job
+@patch('lambdas.get_events.fetch_members')
 @patch('lambdas.get_events.fetch_events')
-def test_get_events_job(mock_fetch_events, event):
+def test_get_events_job(mock_fetch_events, mock_fetch_members, event):
     """Test get_events function with job"""
     # Configure the mock behavior
     def side_effect(board_id):
@@ -132,6 +146,7 @@ def test_get_events_job(mock_fetch_events, event):
             return mock_collective_board()
         return []
     mock_fetch_events.side_effect = side_effect
+    mock_fetch_members.return_value = mock_trello_members()
     event['arguments']['jobs'] = ['EQUIPMENT']
     event['arguments']['type'] = ['BEEKEEPING']
     # Call the function
@@ -141,8 +156,9 @@ def test_get_events_job(mock_fetch_events, event):
         assert 'EQUIPMENT' in item['jobs']
 
 #test get_events returns the events of selected hive
+@patch('lambdas.get_events.fetch_members')
 @patch('lambdas.get_events.fetch_events')
-def test_get_events_hive(mock_fetch_events, event):
+def test_get_events_hive(mock_fetch_events, mock_fetch_members, event):
     """Test get_events function with hive"""
     # Configure the mock behavior
     def side_effect(board_id):
@@ -154,6 +170,7 @@ def test_get_events_hive(mock_fetch_events, event):
             return mock_collective_board()
         return []
     mock_fetch_events.side_effect = side_effect
+    mock_fetch_members.return_value = mock_trello_members()
     event['arguments']['hives'] = ['ROSE']
     event['arguments']['type'] = ['BEEKEEPING']
     # Call the function
@@ -163,8 +180,9 @@ def test_get_events_hive(mock_fetch_events, event):
         assert 'ROSE' in item['hives'] or 'ALL' in item['hives']
 
 #test date range
+@patch('lambdas.get_events.fetch_members')
 @patch('lambdas.get_events.fetch_events')
-def test_get_events_date_range(mock_fetch_events, event):
+def test_get_events_date_range(mock_fetch_events, mock_fetch_members, event):
     """Test get_events function with date range"""
     # Configure the mock behavior
     def side_effect(board_id):
@@ -176,6 +194,7 @@ def test_get_events_date_range(mock_fetch_events, event):
             return mock_collective_board()
         return []
     mock_fetch_events.side_effect = side_effect
+    mock_fetch_members.return_value = mock_trello_members()
     #date range argument an array for start and end timestamps in format %Y-%m-%dT%H:%M:%S.%fZ
     event['arguments']['dateRange'] = ['2023-06-01T00:00:00.000Z', '2023-06-30T00:00:00.000Z']
     event['arguments']['type'] = ['MEETING']
@@ -186,8 +205,9 @@ def test_get_events_date_range(mock_fetch_events, event):
         assert item['start'] > '2023-06-01' and item['start'] < '2023-06-30'
 
 #test date range dates are in correct order
+@patch('lambdas.get_events.fetch_members')
 @patch('lambdas.get_events.fetch_events')
-def test_get_events_date_range_order(mock_fetch_events, event):
+def test_get_events_date_range_order(mock_fetch_events, mock_fetch_members, event):
     """Test get_events function"""
     # Configure the mock behavior
     def side_effect(board_id):
@@ -199,6 +219,7 @@ def test_get_events_date_range_order(mock_fetch_events, event):
             return mock_collective_board()
         return []
     mock_fetch_events.side_effect = side_effect
+    mock_fetch_members.return_value = mock_trello_members()
     #date range argument an array for start and end timestamps in format %Y-%m-%dT%H:%M:%S.%fZ
     event['arguments']['dateRange'] = ['2023-06-30T00:00:00.000Z', '2023-06-01T00:00:00.000Z']
     event['arguments']['type'] = ['MEETING']
@@ -209,8 +230,9 @@ def test_get_events_date_range_order(mock_fetch_events, event):
         assert str(exception) == 'Invalid date range'
 
 #test date range dates are only one date
+@patch('lambdas.get_events.fetch_members')
 @patch('lambdas.get_events.fetch_events')
-def test_get_events_date_range_one_date(mock_fetch_events, event):
+def test_get_events_date_range_one_date(mock_fetch_events, mock_fetch_members, event):
     """Test get_events function"""
     # Configure the mock behavior
     def side_effect(board_id):
@@ -222,6 +244,7 @@ def test_get_events_date_range_one_date(mock_fetch_events, event):
             return mock_collective_board()
         return []
     mock_fetch_events.side_effect = side_effect
+    mock_fetch_members.return_value = mock_trello_members()
     #date range argument an array for start and end timestamps in format %Y-%m-%dT%H:%M:%S.%fZ
     event['arguments']['dateRange'] = ['2023-06-30T00:00:00.000Z']
     event['arguments']['type'] = ['MEETING']
@@ -232,8 +255,9 @@ def test_get_events_date_range_one_date(mock_fetch_events, event):
         assert str(exception) == 'Invalid date range'
 
 #test get all events with all arguments
+@patch('lambdas.get_events.fetch_members')
 @patch('lambdas.get_events.fetch_events')
-def test_get_events_all_arguments(mock_fetch_events, event):
+def test_get_events_all_arguments(mock_fetch_events, mock_fetch_members, event):
     """Test get_events function"""
     # Configure the mock behavior
     def side_effect(board_id):
@@ -245,6 +269,7 @@ def test_get_events_all_arguments(mock_fetch_events, event):
             return mock_collective_board()
         return []
     mock_fetch_events.side_effect = side_effect
+    mock_fetch_members.return_value = mock_trello_members()
     event['arguments']['dateRange'] = ['2023-06-01T00:00:00.000Z', '2023-06-30T00:00:00.000Z']
     event['arguments']['type'] = ['BEEKEEPING']
     event['arguments']['jobs'] = ['EQUIPMENT']
@@ -263,8 +288,9 @@ def test_get_events_all_arguments(mock_fetch_events, event):
         assert item['start'] > '2023-06-01' and item['start'] < '2023-06-30'
 
 #test get all events all arguments return with __typename
+@patch('lambdas.get_events.fetch_members')
 @patch('lambdas.get_events.fetch_events')
-def test_get_events_all_arguments_typename(mock_fetch_events, event):
+def test_get_events_all_arguments_typename(mock_fetch_events, mock_fetch_members, event):
     """Test get_events function"""
     # Configure the mock behavior
     def side_effect(board_id):
@@ -276,6 +302,7 @@ def test_get_events_all_arguments_typename(mock_fetch_events, event):
             return mock_collective_board()
         return []
     mock_fetch_events.side_effect = side_effect
+    mock_fetch_members.return_value = mock_trello_members()
 
     # Call the function
     result = lambda_handler(event, {})
@@ -284,8 +311,9 @@ def test_get_events_all_arguments_typename(mock_fetch_events, event):
         assert '__typename' in item
 
 #test get all events returns roles
+@patch('lambdas.get_events.fetch_members')
 @patch('lambdas.get_events.fetch_events')
-def test_get_events_all_arguments_roles(mock_fetch_events, event):
+def test_get_events_all_arguments_roles(mock_fetch_events, mock_fetch_members, event):
     """Test get_events function"""
     # Configure the mock behavior
     def side_effect(board_id):
@@ -297,6 +325,7 @@ def test_get_events_all_arguments_roles(mock_fetch_events, event):
             return []
         return []
     mock_fetch_events.side_effect = side_effect
+    mock_fetch_members.return_value = mock_trello_members()
 
     # Call the function
     result = lambda_handler(event, {})
