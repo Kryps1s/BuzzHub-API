@@ -9,7 +9,7 @@ class TrelloAPIError(Exception):
     """Exception raised for errors in the Trello API"""
 
 #the root trello user, and te buzzhub user are invalid members
-invalid_members = ["585a7e82c8a3142c77cfb22e", "placeholder_buzzhub_user"]
+invalid_members = ["585a7e82c8a3142c77cfb22e"]
 
 def fetch_members():
     """Fetch all members from the organization"""

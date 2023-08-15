@@ -282,3 +282,24 @@ def test_get_events_all_arguments_typename(mock_fetch_events, event):
     # Check __typename is returned
     for item in result:
         assert '__typename' in item
+
+#test get all events returns roles
+@patch('lambdas.get_events.fetch_events')
+def test_get_events_all_arguments_roles(mock_fetch_events, event):
+    """Test get_events function"""
+    # Configure the mock behavior
+    def side_effect(board_id):
+        if board_id == os.environ['TRELLO_BOARD_MEETING']:
+            return mock_meeting_board()
+        if board_id == os.environ['TRELLO_BOARD_BEEKEEPING']:
+            return []
+        if board_id == os.environ['TRELLO_BOARD_COLLECTIVE']:
+            return []
+        return []
+    mock_fetch_events.side_effect = side_effect
+
+    # Call the function
+    result = lambda_handler(event, {})
+    # Check roles are returned
+    for item in result:
+        assert 'roles' in item
