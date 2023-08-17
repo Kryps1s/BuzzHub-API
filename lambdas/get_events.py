@@ -181,19 +181,21 @@ def map_card_to_event(members, event_type, cards):
             events.append(event)
         else:
             event['__typename'] = "CollectiveEvent"
-    if event_type == "BEEKEEPING" and 'INSPECT' in event['jobs']:
-        #get hive timelines
-        hive_timelines = get_hive_timelines(events)
-        #add the link to the previous job for each job by hive
-        for event in events:
-            hive = event['hives'][0]
-            if hive in hive_timelines:
-                hive_timeline = hive_timelines[hive]
-                job_index = next((index for (index, d) in enumerate(hive_timeline) \
-                                  if d["eventId"] == event['eventId']), None)
-                if job_index > 0:
-                    event['link'] = hive_timeline[job_index-1]['eventId']
-                    event['goal'] = get_goal(hive_timeline[job_index-1]['description'])
+        if event_type == "BEEKEEPING" and 'INSPECT' in event['jobs']:
+            #get hive timelines
+            hive_timelines = get_hive_timelines(events)
+            #loop through events with inspect job
+            for event in events:
+                if 'INSPECT' not in event['jobs']:
+                    continue
+                hive = event['hives'][0]
+                if hive in hive_timelines:
+                    hive_timeline = hive_timelines[hive]
+                    job_index = next((index for (index, d) in enumerate(hive_timeline) \
+                                    if d["eventId"] == event['eventId']), None)
+                    if job_index > 0:
+                        event['link'] = hive_timeline[job_index-1]['eventId']
+                        event['goal'] = get_goal(hive_timeline[job_index-1]['description'])
     return events
 
 def filter_events_by_date_range(events, date_range):
