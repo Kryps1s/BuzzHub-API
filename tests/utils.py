@@ -4,19 +4,19 @@
 def mock_beekeeping_board():
     return [
   {
-    "shortLink": "oBsiLWUX",
+    "shortLink": "oBsiLWUY",
     "due": "2023-07-14T16:00:00.000Z",
     "desc": "",
     "name": "Inspection des ruches",
     "labels": [
       {
-        "shortLink": "oBsiLWUX",
+        "shortLink": "oBsiLWUY",
         "name": "hive:ROSE",
         "color": "pink",
         "uses": 13
       },
       {
-        "shortLink": "oBsiLWUX",
+        "shortLink": "oBsiLWUY",
         "name": "job:INSPECT",
         "color": "lime_dark",
         "uses": 3
@@ -31,15 +31,15 @@ def mock_beekeeping_board():
     "labels": [
       {
         "shortLink": "oBsiLWUX",
-        "name": "Newbees",
-        "color": "sky",
-        "uses": 10
+        "name": "hive:ROSE",
+        "color": "pink",
+        "uses": 13
       },
       {
         "shortLink": "oBsiLWUX",
-        "name": "Éducation/Education",
-        "color": "blue",
-        "uses": 13
+        "name": "job:INSPECT",
+        "color": "lime_dark",
+        "uses": 3
       }
     ]
   },

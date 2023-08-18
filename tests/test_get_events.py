@@ -15,8 +15,6 @@ def fixture_event():
         "arguments": {}
     }
 
-
-
 #test_get_events.py
 @patch('lambdas.get_events.fetch_members')
 @patch('lambdas.get_events.fetch_events')
@@ -34,7 +32,7 @@ def test_get_events(mock_fetch_events, mock_fetch_members, event):
     mock_fetch_events.side_effect = side_effect
     mock_fetch_members.return_value = mock_trello_members()
     result = lambda_handler(event, {})
-    assert len(result) == 4
+    assert len(result) == 5
 
 #test_get_events returns the limited number of events
 @patch('lambdas.get_events.fetch_members')
@@ -339,3 +337,196 @@ def test_get_events_all_arguments_roles(mock_fetch_events, mock_fetch_members, e
         assert item['roles'][0]['roleName'] in roles
         assert item['roles'][1]['roleName'] in roles
         assert item['roles'][2]['roleName'] in roles
+
+#test goal and link is returned
+@patch('lambdas.get_events.fetch_members')
+@patch('lambdas.get_events.fetch_events')
+def test_get_events_all_arguments_goal(mock_fetch_events, mock_fetch_members):
+    """Test get_events function"""
+    # date range to only contain 2023-07-19T22:00:00.000Z
+    test_range = ['2023-07-18T22:00:00.000000Z', '2023-07-20T22:00:00.000000Z']
+    event = {
+        "arguments": {
+            "type": ["BEEKEEPING"],
+            "dateRange": test_range
+        }
+    }
+    mocked_beekeeping_board = mock_beekeeping_board()
+    #add descriptions with the goal emoji ➡️
+    mocked_beekeeping_board[0]['desc'] = 'sdfasdfasdfasdfas' + '➡️' + 'goal123'
+    mocked_beekeeping_board[1]['desc'] = 'sdfasdfasdfasdfas' + '➡️' + 'goal321'
+
+    def side_effect(board_id):
+        if board_id == os.environ['TRELLO_BOARD_MEETING']:
+            #meeting board has goal
+            return []
+        if board_id == os.environ['TRELLO_BOARD_BEEKEEPING']:
+            #beekeeping board has no goal
+            return [mocked_beekeeping_board[0], mocked_beekeeping_board[1]]
+        if board_id == os.environ['TRELLO_BOARD_COLLECTIVE']:
+            #collective board has no goal
+            return []
+        return []
+    mock_fetch_events.side_effect = side_effect
+    mock_fetch_members.return_value = mock_trello_members()
+
+    # Call the function
+    result = lambda_handler(event, {})
+    # Check goal is returned with link and goal from first card
+    for item in result:
+        assert item['goal'] == mocked_beekeeping_board[0]['desc'].split('➡️')[1].strip()
+        assert item['link'] == mocked_beekeeping_board[0]['shortLink']
+
+#test goal is not returned gracefully if no goal
+@patch('lambdas.get_events.fetch_members')
+@patch('lambdas.get_events.fetch_events')
+def test_get_events_all_arguments_no_goal(mock_fetch_events, mock_fetch_members):
+    """Test get_events function"""
+    # date range to only contain 2023-07-19T22:00:00.000Z
+    test_range = ['2023-07-18T22:00:00.000000Z', '2023-07-20T22:00:00.000000Z']
+    event = {
+        "arguments": {
+            "type": ["BEEKEEPING"],
+            "dateRange": test_range
+        }
+    }
+    mocked_beekeeping_board = mock_beekeeping_board()
+    #add descriptions with the goal emoji ➡️
+    mocked_beekeeping_board[0]['desc'] = ''
+    mocked_beekeeping_board[1]['desc'] = 'sdfasdfasdfasdfas' + '➡️' + 'goal321'
+
+    def side_effect(board_id):
+        if board_id == os.environ['TRELLO_BOARD_MEETING']:
+            #meeting board has goal
+            return []
+        if board_id == os.environ['TRELLO_BOARD_BEEKEEPING']:
+            #beekeeping board has no goal
+            return [mocked_beekeeping_board[0], mocked_beekeeping_board[1]]
+        if board_id == os.environ['TRELLO_BOARD_COLLECTIVE']:
+            #collective board has no goal
+            return []
+        return []
+    mock_fetch_events.side_effect = side_effect
+    mock_fetch_members.return_value = mock_trello_members()
+
+    # Call the function
+    result = lambda_handler(event, {})
+    # Check goal is returned with link and goal from first card
+    for item in result:
+        assert item['goal'] is None
+        assert item['link'] == mocked_beekeeping_board[0]['shortLink']
+
+#assert event is returned with no previous card for link
+@patch('lambdas.get_events.fetch_members')
+@patch('lambdas.get_events.fetch_events')
+def test_get_events_all_arguments_no_previous_card(mock_fetch_events, mock_fetch_members):
+    """Test get_events function"""
+    # date range to only contain 2023-07-14
+    test_range = ['2023-07-13T22:00:00.000000Z', '2023-07-15T22:00:00.000000Z']
+    event = {
+        "arguments": {
+            "type": ["BEEKEEPING"],
+            "dateRange": test_range
+        }
+    }
+    mocked_beekeeping_board = mock_beekeeping_board()
+    #add descriptions with the goal emoji ➡️
+    mocked_beekeeping_board[0]['desc'] = 'sdfasdfasdfasdfas' + '➡️' + 'goal123'
+    mocked_beekeeping_board[1]['desc'] = 'sdfasdfasdfasdfas' + '➡️' + 'goal321'
+
+    def side_effect(board_id):
+        if board_id == os.environ['TRELLO_BOARD_MEETING']:
+            #meeting board has goal
+            return []
+        if board_id == os.environ['TRELLO_BOARD_BEEKEEPING']:
+            #beekeeping board has no goal
+            return [mocked_beekeeping_board[0], mocked_beekeeping_board[1]]
+        if board_id == os.environ['TRELLO_BOARD_COLLECTIVE']:
+            #collective board has no goal
+            return []
+        return []
+    mock_fetch_events.side_effect = side_effect
+    mock_fetch_members.return_value = mock_trello_members()
+
+    # Call the function
+    result = lambda_handler(event, {})
+    # Check goal is returned with link and goal from first card
+    for item in result:
+        assert item['goal'] is None
+        assert item['link'] is None
+
+#test returns when previous card does not have next steps emoji
+@patch('lambdas.get_events.fetch_members')
+@patch('lambdas.get_events.fetch_events')
+def test_get_events_all_arguments_no_next_steps(mock_fetch_events, mock_fetch_members):
+    """test when previous card does not have next steps emoji"""
+    test_range = ['2023-07-18T22:00:00.000000Z', '2023-07-20T22:00:00.000000Z']
+    event = {
+        "arguments": {
+            "type": ["BEEKEEPING"],
+            "dateRange": test_range
+        }
+    }
+    mocked_beekeeping_board = mock_beekeeping_board()
+    #add descriptions with the goal emoji ➡️
+    mocked_beekeeping_board[0]['desc'] = 'sdfasdfasdfasdfas' +  'goal123'
+    mocked_beekeeping_board[1]['desc'] = 'sdfasdfasdfasdfas' + '➡️' + 'goal321'
+
+    def side_effect(board_id):
+        if board_id == os.environ['TRELLO_BOARD_MEETING']:
+            #meeting board has goal
+            return []
+        if board_id == os.environ['TRELLO_BOARD_BEEKEEPING']:
+            #beekeeping board has no goal
+            return [mocked_beekeeping_board[0], mocked_beekeeping_board[1]]
+        if board_id == os.environ['TRELLO_BOARD_COLLECTIVE']:
+            #collective board has no goal
+            return []
+        return []
+    mock_fetch_events.side_effect = side_effect
+    mock_fetch_members.return_value = mock_trello_members()
+
+    # Call the function
+    result = lambda_handler(event, {})
+    # Check goal is returned with link and goal from first card
+    for item in result:
+        assert item['goal'] is None
+        assert item['link'] is mocked_beekeeping_board[0]['shortLink']
+
+#test returns when previous card does has next steps emoji as last character
+@patch('lambdas.get_events.fetch_members')
+@patch('lambdas.get_events.fetch_events')
+def test_get_events_next_steps_as_last_character(mock_fetch_events, mock_fetch_members):
+    """test when previous card does not have next steps emoji"""
+    test_range = ['2023-07-18T22:00:00.000000Z', '2023-07-20T22:00:00.000000Z']
+    event = {
+        "arguments": {
+            "type": ["BEEKEEPING"],
+            "dateRange": test_range
+        }
+    }
+    mocked_beekeeping_board = mock_beekeeping_board()
+    #add descriptions with the goal emoji ➡️
+    mocked_beekeeping_board[0]['desc'] = 'sdfasdfasdfasdfas' +  'goal123➡️'
+    mocked_beekeeping_board[1]['desc'] = 'sdfasdfasdfasdfas' + '➡️' + 'goal321'
+
+    def side_effect(board_id):
+        if board_id == os.environ['TRELLO_BOARD_MEETING']:
+            #meeting board has goal
+            return []
+        if board_id == os.environ['TRELLO_BOARD_BEEKEEPING']:
+            #beekeeping board has no goal
+            return [mocked_beekeeping_board[0], mocked_beekeeping_board[1]]
+        if board_id == os.environ['TRELLO_BOARD_COLLECTIVE']:
+            #collective board has no goal
+            return []
+        return []
+    mock_fetch_events.side_effect = side_effect
+    mock_fetch_members.return_value = mock_trello_members()
+
+    # Call the function
+    result = lambda_handler(event, {})
+    # Check goal is returned with link and goal from first card
+    for item in result:
+        assert item['goal'] is None
+        assert item['link'] is mocked_beekeeping_board[0]['shortLink']
