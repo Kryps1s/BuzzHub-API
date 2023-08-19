@@ -27,7 +27,7 @@ def lambda_handler(event, _):
     #fetch card
     card = fetch_card(card_id)
     #add report to card
-    card['desc'] = report
+    card['desc'] = requests.utils.unquote(report)
     #add participants to card
     card['idMembers'] = participants
     #mark card as complete

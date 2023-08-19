@@ -102,6 +102,8 @@ def map_beekeeping_event(event, card):
     event['jobs'] = []
     event['hives'] = []
     event['roles'] = []
+    event['link'] = None
+    event['goal'] = None
     #try parsing {} enclosure in desc into json if first character is {
     if card['desc'].startswith("{") and is_valid_json(card['desc'].split("}")[0] + "}"):
         roles = json.loads(card['desc'].split("}")[0] + "}")
@@ -125,15 +127,49 @@ def process_role_line(line, role_name, members):
         return {'roleName': role_name, 'user': member}
     return {'roleName': role_name, 'user': {'username': username}}
 
+def get_hive_timelines(jobs):
+    """map of inspections and link to previous inspection"""
+    hive_arrays = {}
+    for job in jobs:
+        job_types = job['jobs']
+        hive_ids = job['hives']
+        job_details = {"eventId": job['eventId'], "description": job['description']}
+        if 'INSPECT' in job_types:
+            for hive_id in hive_ids:
+                if hive_id == 'ALL':
+                    for hive_array in hive_arrays.values():
+                        hive_array.append(job_details)
+                elif hive_id not in hive_arrays:
+                    hive_arrays[hive_id] = [job_details]
+                else:
+                    hive_arrays[hive_id].append(job_details)
+
+    return hive_arrays
+
+def get_goal(description):
+    """Get goal from description"""
+    #check if there is a goal
+    if "➡️" not in description:
+        return None
+    goal = description.split("➡️")[1]
+    #return None is goal is empty
+    if goal == "":
+        return None
+    return goal
+
 def map_card_to_event(members, event_type, cards):
     """Map trello card to event"""
+    if cards is None or len(cards) == 0:
+        return []
     events = []
+    cards.sort(key=lambda x: x['due'])
     for card in cards:
         event = {}
         event['eventId'] = card['shortLink']
         event['type'] = event_type
         event['start'] = card['due']
         event['name'] = card['name']
+        event['description'] = card['desc']
         #map specific event fields
         if event_type == "BEEKEEPING":
             event = map_beekeeping_event(event, card)
@@ -145,6 +181,21 @@ def map_card_to_event(members, event_type, cards):
             events.append(event)
         else:
             event['__typename'] = "CollectiveEvent"
+        if event_type == "BEEKEEPING" and 'INSPECT' in event['jobs']:
+            #get hive timelines
+            hive_timelines = get_hive_timelines(events)
+            #loop through events with inspect job
+            for event in events:
+                if 'INSPECT' not in event['jobs']:
+                    continue
+                hive = event['hives'][0]
+                if hive in hive_timelines:
+                    hive_timeline = hive_timelines[hive]
+                    job_index = next((index for (index, d) in enumerate(hive_timeline) \
+                                    if d["eventId"] == event['eventId']), None)
+                    if job_index > 0:
+                        event['link'] = hive_timeline[job_index-1]['eventId']
+                        event['goal'] = get_goal(hive_timeline[job_index-1]['description'])
     return events
 
 def filter_events_by_date_range(events, date_range):

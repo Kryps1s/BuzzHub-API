@@ -2,7 +2,6 @@
 This lambda function will return a calendar event by id. 
 """
     # pylint: disable=R0801
-    #I love my cat Petrie
 
 import os
 import json
@@ -76,9 +75,10 @@ def fetch_event(event_id):
         return None
     return response.json()
 
+
+
 def lambda_handler(event, _):
     """
-    A simple wrapper around the DynamoDB get_item function.
     id is a string
     event : the event object from the GraphQL query
     """
