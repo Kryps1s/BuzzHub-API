@@ -133,7 +133,7 @@ def get_hive_timelines(jobs):
     for job in jobs:
         job_types = job['jobs']
         hive_ids = job['hives']
-        job_details = {"eventId": job['eventId'], "description": job['description']}
+        job_details = {"eventId": job['eventId'], "description": job['notes']}
         if 'INSPECT' in job_types:
             for hive_id in hive_ids:
                 if hive_id == 'ALL':
@@ -169,7 +169,7 @@ def map_card_to_event(members, event_type, cards):
         event['type'] = event_type
         event['start'] = card['due']
         event['name'] = card['name']
-        event['description'] = card['desc']
+        event['notes'] = card['desc']
         #map specific event fields
         if event_type == "BEEKEEPING":
             event = map_beekeeping_event(event, card)
