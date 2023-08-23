@@ -19,10 +19,7 @@ jobs:
           python-version: 3.10.12
 
       - name: Install dependencies
-        run: |
-          pip install pytest
-          pip install boto3
-          pip install requests
+        run: pip install -r requirements.txt
         
       - name: set environment variables
         run: output=$(python set_env_vars.py)
