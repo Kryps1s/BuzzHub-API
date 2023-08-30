@@ -186,7 +186,7 @@ def map_card_to_event(members, event_type, cards):
             hive_timelines = get_hive_timelines(events)
             #loop through events with inspect job
             for event in events:
-                if 'INSPECT' not in event['jobs']:
+                if 'INSPECT' not in event['jobs'] or len(event['hives']) == 0:
                     continue
                 hive = event['hives'][0]
                 if hive in hive_timelines:
