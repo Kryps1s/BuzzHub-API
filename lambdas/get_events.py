@@ -111,10 +111,10 @@ def map_beekeeping_event(event, card):
         event['roles'].append(roles)
     #loop through labels
     for label in card['labels']:
-        #if label name starts with job or hive, add to event array
-        if label['name'].startswith("job"):
+        #if label name starts with job: or hive:, add to event array
+        if label['name'].startswith("job:"):
             event['jobs'].append(label['name'].split("job:")[1])
-        elif label['name'].startswith("hive"):
+        elif label['name'].startswith("hive:"):
             event['hives'].append(label['name'].split("hive:")[1])
     return event
 
