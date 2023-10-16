@@ -45,9 +45,9 @@ def lambda_handler(event, _):
     card = update_card(card)
     #create next event
     if event['arguments']['nextInspection'] is not None:
-        next_inspection = event['arguments']['nextInspection']
-        card['desc'] = next_inspection['goal']
-        card['due'] = next_inspection['date']
+        if event['arguments']['goal'] is not None:
+            card['desc'] = event['arguments']['goal']
+        card['due'] = event['arguments']['nextInspection']
         #get the label with the hive name and add it to the card
         hive = 'UNKNOWN HIVE'
         for label in card['labels']:
@@ -56,7 +56,7 @@ def lambda_handler(event, _):
                 hive = label['name'].replace('hive:', '')
                 break
         #get card name, full or partial based on inspection full, then display hive name
-        if next_inspection['full']:
+        if event['arguments']['full']:
             card_name = 'Full Inspection: ' + hive
         else:
             card_name = 'Partial Inspection: ' + hive
@@ -154,30 +154,24 @@ def validate_event(event):
 def validate_inspection(inspection):
     """validate inspection"""
     valid = True
-    #check if inspection is a dict
-    if not isinstance(inspection, dict):
-        valid = False
     #check if date is a string
-    if not isinstance(inspection['date'], str):
+    if not isinstance(inspection, str):
         valid = False
     #check if date is empty
-    if not inspection['date']:
+    if not inspection:
         valid = "date for next inspection cannot be empty"
-    #check if full is a boolean
-    if not isinstance(inspection['full'], bool):
-        valid = False
     #check if date is not in the past
     today = datetime.date.today()
-    year = int(inspection['date'][0:4])
-    month = int(inspection['date'][5:7])
-    day = int(inspection['date'][8:10])
+    year = int(inspection[0:4])
+    month = int(inspection[5:7])
+    day = int(inspection[8:10])
     date = datetime.date(year, month, day)
     if date < today:
         valid = "next inspection date must be greater than today"
     #check if date is in the format YYYY-MM-DD
-    if len(inspection['date']) != 10:
+    if len(inspection) != 10:
         valid = False
-    if inspection['date'][4] != '-' or inspection['date'][7] != '-':
+    if inspection[4] != '-' or inspection[7] != '-':
         valid = False
     return valid
 

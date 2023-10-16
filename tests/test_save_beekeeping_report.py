@@ -122,11 +122,9 @@ def test_save_beekeeping_report_fail_invalid_card(event):
 def test_save_beekeeping_report_create_next_inspection(
     mock_update_card,mock_fetch_card,mock_create_card, event):
     """ Test fetch_card """
-    event['arguments']['nextInspection'] =  {
-                "date": "2054-08-01",
-                "goal": "This is a test goal",
-                "full": True
-            }
+    event["arguments"]["nextInspection"] = "2054-08-01"
+    event["arguments"]["goal"] = "This is a test goal"
+    event["arguments"]["full"] = True
     mock_fetch_card.return_value = mock_trello_card()
     mock_update_card.return_value = mock_trello_card()
     mock_create_card.return_value = mock_trello_card()
@@ -142,17 +140,15 @@ def test_save_beekeeping_report_create_next_inspection(
 def test_save_beekeeping_report_create_next_inspection_invalid_date(
     mock_update_card,mock_fetch_card,mock_create_card, event):
     """ Test fetch_card """
-    event['arguments']['nextInspection'] =  {
-                "date": "2020-08-01",
-                "goal": "This is a test goal",
-                "full": True
-            }
+    event["arguments"]["nextInspection"] = "2020-08-01"
+    event["arguments"]["goal"] = "This is a test goal"
+    event["arguments"]["full"] = True
     mock_fetch_card.return_value = mock_trello_card()
     mock_update_card.return_value = mock_trello_card()
     mock_create_card.return_value = mock_trello_card()
     event['arguments']['report'] = "This is a test report. Next inspection: 2020-08-01"
     #invalid date
-    event['arguments']['nextInspection']['date'] = "2020-08-01"
+    event['arguments']['nextInspection'] = "2020-08-01"
     with pytest.raises(ValueError) as err:
         lambda_handler(event,{})
     # Check the result
