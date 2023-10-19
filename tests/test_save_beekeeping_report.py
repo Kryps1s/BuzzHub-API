@@ -11,7 +11,8 @@ def fixture_event():
         "arguments": {
             "eventId": "oBsiLWUX",
             "report": "This is a test report",
-            "participants": ["5f1c7b8d0b4a5e7e1a4c1b6d"]
+            "participants": ["5f1c7b8d0b4a5e7e1a4c1b6d"],
+            "nextInspection" : None
         }
     }
 
@@ -113,3 +114,42 @@ def test_save_beekeeping_report_fail_invalid_card(event):
         lambda_handler(event,{})
     # Check the result value contains Trello API error
     assert "Trello API error" in str(err.value)
+
+#test create next inspection card
+@patch('lambdas.save_beekeeping_report.fetch_card')
+@patch('lambdas.save_beekeeping_report.update_card')
+@patch('lambdas.save_beekeeping_report.create_next_inspection')
+def test_save_beekeeping_report_create_next_inspection(
+    mock_update_card,mock_fetch_card,mock_create_card, event):
+    """ Test fetch_card """
+    event["arguments"]["nextInspection"] = "2054-08-01"
+    event["arguments"]["goal"] = "This is a test goal"
+    event["arguments"]["full"] = True
+    mock_fetch_card.return_value = mock_trello_card()
+    mock_update_card.return_value = mock_trello_card()
+    mock_create_card.return_value = mock_trello_card()
+    event['arguments']['report'] = "This is a test report. Next inspection: 2020-08-01"
+    message = lambda_handler(event,{})
+    # Check the result
+    assert message == {'message': 'successfully saved report and created next inspection'}
+
+#test create next inspection card with invalid date
+@patch('lambdas.save_beekeeping_report.fetch_card')
+@patch('lambdas.save_beekeeping_report.update_card')
+@patch('lambdas.save_beekeeping_report.create_next_inspection')
+def test_save_beekeeping_report_create_next_inspection_invalid_date(
+    mock_update_card,mock_fetch_card,mock_create_card, event):
+    """ Test fetch_card """
+    event["arguments"]["nextInspection"] = "2020-08-01"
+    event["arguments"]["goal"] = "This is a test goal"
+    event["arguments"]["full"] = True
+    mock_fetch_card.return_value = mock_trello_card()
+    mock_update_card.return_value = mock_trello_card()
+    mock_create_card.return_value = mock_trello_card()
+    event['arguments']['report'] = "This is a test report. Next inspection: 2020-08-01"
+    #invalid date
+    event['arguments']['nextInspection'] = "2020-08-01"
+    with pytest.raises(ValueError) as err:
+        lambda_handler(event,{})
+    # Check the result
+    assert str(err.value) == "next inspection date must be greater than today"
