@@ -14,6 +14,7 @@ try:
         env_file.write("MEETING_BOARD_ID=64b21cca436d90217bd118ab\n")
         env_file.write("COLLECTIVE_BOARD_ID=64b21cde88cacf22ced015f1\n")
         env_file.write("BEEKEEPING_LIST_COMPLETED=64beb3f0205aede5e00af059\n")
+        env_file.write("BEEKEEPING_LIST_UNASSIGNED=64da66bfdfc9d4cfe0c97b0e\n")
         env_file.write("TRELLO_KEY=mocked\n")
         env_file.write("TRELLO_TOKEN=mocked\n")
         env_file.write("BUZZHUB_ACCESS_CODE=test\n")

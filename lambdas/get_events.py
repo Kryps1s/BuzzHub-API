@@ -111,10 +111,10 @@ def map_beekeeping_event(event, card):
         event['roles'].append(roles)
     #loop through labels
     for label in card['labels']:
-        #if label name starts with job or hive, add to event array
-        if label['name'].startswith("job"):
+        #if label name starts with job: or hive:, add to event array
+        if label['name'].startswith("job:"):
             event['jobs'].append(label['name'].split("job:")[1])
-        elif label['name'].startswith("hive"):
+        elif label['name'].startswith("hive:"):
             event['hives'].append(label['name'].split("hive:")[1])
     return event
 
@@ -186,7 +186,7 @@ def map_card_to_event(members, event_type, cards):
             hive_timelines = get_hive_timelines(events)
             #loop through events with inspect job
             for event in events:
-                if 'INSPECT' not in event['jobs']:
+                if 'INSPECT' not in event['jobs'] or len(event['hives']) == 0:
                     continue
                 hive = event['hives'][0]
                 if hive in hive_timelines:

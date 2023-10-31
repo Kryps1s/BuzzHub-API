@@ -19,10 +19,7 @@ jobs:
           python-version: 3.10.12
 
       - name: Install dependencies
-        run: |
-          pip install pytest
-          pip install boto3
-          pip install requests
+        run: pip install -r requirements.txt
         
       - name: set environment variables
         run: output=$(python set_env_vars.py)
@@ -43,11 +40,7 @@ jobs:
           python-version: 3.10.12
 
       - name: Install dependencies
-        run: |
-          pip install pylint
-          pip install pytest
-          pip install boto3
-          pip install requests
+        run:  pip install -r requirements.txt
         
       - name: linting
         run: pylint **/*.py
@@ -247,4 +240,5 @@ jobs:
           TRELLO_TOKEN=${{ secrets.DEV_TRELLO_TOKEN }},
           TRELLO_ORGANIZATION=${{ secrets.DEV_TRELLO_ORGANIZATION }},
           BEEKEEPING_LIST_COMPLETED=${{ secrets.DEV_BEEKEEPING_LIST_COMPLETED }},
+          BEEKEEPING_LIST_UNASSIGNED=${{ secrets.DEV_BEEKEEPING_LIST_UNASSIGNED }},
           }"
