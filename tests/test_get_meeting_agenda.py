@@ -67,8 +67,9 @@ def test_get_meeting_agenda_empty_event(mock_get_board, event):
     def side_effect(board_id):
         if board_id == os.environ['TRELLO_BOARD_BEEKEEPING']:
             return []
-        elif board_id == os.environ['TRELLO_BOARD_COLLECTIVE']:
+        if board_id == os.environ['TRELLO_BOARD_COLLECTIVE']:
             return []
+        raise ValueError("Board must be BEEKEEPING or COLLECTIVE")
     mock_get_board.side_effect = side_effect
     #call lambda_handler
     test = lambda_handler(event, {})
