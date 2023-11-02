@@ -4,20 +4,21 @@ import requests
 
 def get_trello_board(board):
     """get trello board"""
-    url = "https://api.trello.com/1/boards/" + board + "/cards"
-    headers = {
+    req_url = "https://api.trello.com/1/boards/" + board + "/cards"
+    req_header = {
     "Accept": "application/json"
     }
     query = {
     'key': os.environ['TRELLO_KEY'],
     'token': os.environ['TRELLO_TOKEN']
     }
+    # pylint: disable=R0801
     response = requests.request(
     "GET",
-    url,
-    headers=headers,
+    headers=req_header,
     params=query,
-    timeout=30
+    timeout=35,
+    url=req_url
     )
     if response.ok is False:
         raise ValueError("Trello API error: " + response.text)
