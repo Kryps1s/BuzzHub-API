@@ -4,151 +4,170 @@
 def mock_beekeeping_board():
     return [
   {
-    "shortLink": "oBsiLWUY",
+    "idList": "64beb3f0205aede5e00af059",
+    "shortLink": "oBsiLWUX",
     "due": "2023-07-14T16:00:00.000Z",
     "desc": "",
-    "name": "Inspection des ruches",
+    "name": "test beekeeping item 1",
     "labels": [
       {
-        "shortLink": "oBsiLWUY",
+        "shortLink": "oBsiLWUX",
         "name": "hive:ROSE",
         "color": "pink",
         "uses": 13
       },
       {
-        "shortLink": "oBsiLWUY",
+        "shortLink": "oBsiLWUX",
         "name": "job:INSPECT",
         "color": "lime_dark",
         "uses": 3
       }
-    ]
+    ],
+    "idMembers": ["5e6a57617b6a8f865837b846", "625f6e9e6922e141bf05fae2"]
   },
   {
-    "shortLink": "oBsiLWUX",
+    "idList": "64beb3f0205aede5e00af059",
+    "shortLink": "oBsiLWUY",
     "due": "2023-07-19T22:00:00.000Z",
     "desc": "",
-    "name": "Inspection des ruches",
+    "name": "test beekeeping item 2",
     "labels": [
       {
-        "shortLink": "oBsiLWUX",
+        "shortLink": "oBsiLWUY",
         "name": "hive:ROSE",
         "color": "pink",
         "uses": 13
       },
       {
-        "shortLink": "oBsiLWUX",
+        "shortLink": "oBsiLWUY",
         "name": "job:INSPECT",
         "color": "lime_dark",
         "uses": 3
       }
-    ]
+    ],
+    "idMembers": ["5e6a57617b6a8f865837b846", "626194d4c9873f601f82fd0f"]
   },
   {
-    "shortLink": "oBsiLWUX",
+    "idList": "64da66bfdfc9d4cfe0c97b0e",
+    "shortLink": "oBsiLWUZ",
     "due": "2023-08-01T18:58:00.000Z",
-    "name": "Inspection des ruches",
+    "name": "test beekeeping item 3",
     "desc": "",
     "labels": [
       {
-        "shortLink": "oBsiLWUX",
+        "shortLink": "oBsiLWUZ",
         "name": "hive:ALL",
         "color": "orange",
         "uses": 18
       },
       {
-        "shortLink": "oBsiLWUX",
+        "shortLink": "oBsiLWUZ",
         "name": "job:EQUIPMENT",
         "color": "black_light",
         "uses": 11
       }
-    ]
+    ],
+    "idMembers": ["5e6a57617b6a8f865837b846"]
   },
   {
-    "shortLink": "oBsiLWUX",
-    "name": "Inspection des ruches",
+    "idList": "64beb3f0205aede5e00af059",
+    "shortLink": "oBsiLWUV",
     "due": "2023-07-17T22:00:00.000Z",
+    "name": "test beekeeping item 4",
     "desc": "",
     "labels": [
       {
-        "shortLink": "oBsiLWUX",
+        "shortLink": "oBsiLWUV",
         "name": "Éducation/Education",
         "color": "blue",
         "uses": 13
       }
-    ]
+    ],
+    "idMembers": ["625f6e9e6922e141bf05fae2"]
   },
   {
-    "shortLink": "oBsiLWUX",
+    "idList": "64beb3f0205aede5e00af059",
+    "shortLink": "oBsiLWUT",
     "due": "2023-06-29T22:00:00.000Z",
-    "name": "Inspection des ruches",
+    "name": "test beekeeping item 5",
     "desc": "",
     "labels": [
       {
-        "shortLink": "oBsiLWUX",
+        "shortLink": "oBsiLWUT",
         "name": "Newbees",
         "color": "sky",
         "uses": 10
       },
       {
-        "shortLink": "oBsiLWUX",
+        "shortLink": "oBsiLWUT",
         "name": "Éducation/Education",
         "color": "blue",
         "uses": 13
       }
-    ]
+    ],
+    "idMembers": ["5e6a57617b6a8f865837b846", "626194d4c9873f601f82fd0f"]
   },
   {
-    "shortLink": "oBsiLWUX",
+    "idList": "64beb3f0205aede5e00af059",
+    "shortLink": "oBsiLWUS",
     "due": "2023-05-26T22:00:00.000Z",
-    "name": "Inspection des ruches",
+    "name": "test beekeeping item 6",
     "desc": "",
     "labels": [
       {
-        "shortLink": "oBsiLWUX",
+        "shortLink": "oBsiLWUS",
         "name": "Newbees",
         "color": "sky",
         "uses": 10
       },
       {
-        "shortLink": "oBsiLWUX",
+        "shortLink": "oBsiLWUS",
         "name": "Éducation/Education",
         "color": "blue",
         "uses": 13
       }
-    ]
+    ],
+    "idMembers": ["5e6a57617b6a8f865837b846", "626194d4c9873f601f82fd0f"]
   },
   {
-    "shortLink": "oBsiLWUX",
+    "idList": "64beb3f0205aede5e00af059",
+    "shortLink": "oBsiLWUR",
     "due": "2023-06-13T22:00:00.000Z",
-    "name": "Inspection des ruches",
+    "name": "test beekeeping item 7",
     "desc": "",
     "labels": [
       {
-        "shortLink": "oBsiLWUX",
+        "shortLink": "oBsiLWUR",
         "name": "Newbees",
         "color": "sky",
         "uses": 10
       },
       {
-        "shortLink": "oBsiLWUX",
+        "shortLink": "oBsiLWUR",
         "name": "Éducation/Education",
         "color": "blue",
         "uses": 13
       }
-    ]
+    ],
+    "idMembers": ["626194d4c9873f601f82fd0f"]
   },
   {
-    "shortLink": "oBsiLWUX",
+    "idList": "64beb3f0205aede5e00af059",
+    "shortLink": "oBsiLWUQ",
     "due": "2023-07-04T22:00:00.000Z",
-    "name": "Inspection des ruches",
+    "name": "test beekeeping item 8",
     "desc": "",
-    "labels": []
+    "labels": [],
+    "idMembers": []
   }
 ]
+
+
 
 def mock_collective_board():
     return [
   {
+    "idList": "64b21cde88cacf22ced015fa",
     "shortLink": "oBsiLWUX",
     "due": "2023-07-17T22:00:00.000Z",
     "desc": "",
@@ -161,13 +180,15 @@ def mock_collective_board():
         "color": "green",
         "uses": 11
       }
-    ]
+    ],
+    "idMembers": ["5e6a57617b6a8f865837b846", "625f6e9e6922e141bf05fae2"]
   },
   {
+    "idList": "64b21cde88cacf22ced015f9",
     "shortLink": "oBsiLWUX",
     "due": "2023-06-05T22:00:00.000Z",
-    "name": "collective event 1",
     "desc": "",
+    "name": "collective event 1",
     "labels": [
       {
         "shortLink": "oBsiLWUX",
@@ -176,9 +197,11 @@ def mock_collective_board():
         "color": "green",
         "uses": 11
       }
-    ]
+    ],
+    "idMembers": ["5e6a57617b6a8f865837b846"]
   },
   {
+    "idList": "64b21cde88cacf22ced015f9",
     "shortLink": "oBsiLWUX",
     "due": "2023-07-13T20:00:00.000Z",
     "name": "collective event 1",
@@ -191,12 +214,14 @@ def mock_collective_board():
         "color": "green",
         "uses": 11
       }
-    ]
+    ],
+    "idMembers": ["5e6a57617b6a8f865837b846"]
   },
   {
+    "idList": "64b21cde88cacf22ced015fa",
     "shortLink": "oBsiLWUX",
     "due": "2023-07-15T22:00:00.000Z",
-    "desc": "",    
+    "desc": "",
     "name": "collective event 1",
     "labels": [
       {
@@ -206,12 +231,14 @@ def mock_collective_board():
         "color": "green",
         "uses": 11
       }
-    ]
+    ],
+    "idMembers": []
   },
   {
+    "idList": "64b21cde88cacf22ced015fa",
     "shortLink": "oBsiLWUX",
     "due": "2023-08-08T22:00:00.000Z",
-    "desc": "", 
+    "desc": "",
     "name": "collective event 1",
     "labels": [
       {
@@ -221,9 +248,11 @@ def mock_collective_board():
         "color": "black_light",
         "uses": 15
       }
-    ]
+    ],
+    "idMembers": ["5e6a57617b6a8f865837b846", "625f6e9e6922e141bf05fae2"]
   },
   {
+    "idList": "64b21cde88cacf22ced015f8",
     "shortLink": "oBsiLWUX",
     "due": "2023-08-01T22:00:00.000Z",
     "name": "collective event 1",
@@ -236,9 +265,11 @@ def mock_collective_board():
         "color": "blue",
         "uses": 5
       }
-    ]
+    ],
+    "idMembers": ["5e6a57617b6a8f865837b846", "625f6e9e6922e141bf05fae2"]
   },
   {
+    "idList": "64b21cde88cacf22ced015f8",
     "shortLink": "oBsiLWUX",
     "name": "collective event 1",
     "due": "2023-07-08T01:02:00.000Z",
@@ -251,9 +282,11 @@ def mock_collective_board():
         "color": "pink",
         "uses": 7
       }
-    ]
+    ],
+    "idMembers": []
   }
 ]
+
 
 def mock_meeting_board():
     return [

@@ -527,7 +527,7 @@ def test_get_events_all_arguments_no_hive(mock_fetch_events, mock_fetch_members)
     result = lambda_handler(event, {})
     # Check goal is returned with link and goal from first card
     for item in result:
-        assert item['name'] == "Inspection des ruches"
+        assert item['name'] == "test beekeeping item 2"
 
 #test does not crash when a beekeeping card has a hive and no job
 @patch('lambdas.get_events.fetch_members')
@@ -563,7 +563,7 @@ def test_get_events_all_arguments_no_job(mock_fetch_events, mock_fetch_members):
     result = lambda_handler(event, {})
     # Check goal is returned with link and goal from first card
     for item in result:
-        assert item['name'] == "Inspection des ruches"
+        assert item['name'] == "test beekeeping item 2"
 
 #test does not crash when a beekeeping job is unexpected
 @patch('lambdas.get_events.fetch_members')
@@ -600,3 +600,41 @@ def test_get_events_all_arguments_unexpected_job(mock_fetch_events, mock_fetch_m
         lambda_handler(event, {})
     except ValueError as exception:
         assert str(exception) == 'Unexpected job'
+
+#test does not crash when a meeting role has no tagged member
+@patch('lambdas.get_events.fetch_members')
+@patch('lambdas.get_events.fetch_events')
+def test_get_events_all_arguments_no_member(mock_fetch_events, mock_fetch_members):
+    """test when a hive tag is remove from an inspecition card it is handled gracefully"""
+    test_range = ['2020-07-18T22:00:00.000000Z', '2033-07-20T22:00:00.000000Z']
+    event = {
+        "arguments": {
+            "type": ["MEETING"],
+            "dateRange": test_range
+        }
+    }
+    mocked_meeting_board = mock_meeting_board()
+    #remove tagged role first card
+    mocked_meeting_board[0]['desc'] =\
+          '📣Facilitator: invalid\n\n🔧Jockey: @elliotoreilly\n\n✏️Scribe: @elliotoreilly'
+
+    def side_effect(board_id):
+        if board_id == os.environ['TRELLO_BOARD_MEETING']:
+            #meeting board has goal
+            return [mocked_meeting_board[0]]
+        if board_id == os.environ['TRELLO_BOARD_BEEKEEPING']:
+            #beekeeping board has no goal
+            return []
+        if board_id == os.environ['TRELLO_BOARD_COLLECTIVE']:
+            #collective board has no goal
+            return []
+        return []
+    mock_fetch_events.side_effect = side_effect
+    mock_fetch_members.return_value = mock_trello_members()
+
+    # Call the function
+    try:
+        test = lambda_handler(event, {})
+        assert test is not None
+    except ValueError as exception:
+        assert str(exception) == 'No member for role'
