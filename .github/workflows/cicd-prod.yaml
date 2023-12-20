@@ -281,3 +281,33 @@ jobs:
           COLLECTIVE_LIST_IN_PROGRESS=${{ secrets.PROD_COLLECTIVE_LIST_IN_PROGRESS }},
           COLLECTIVE_LIST_UNASSIGNED=${{ secrets.PROD_COLLECTIVE_LIST_UNASSIGNED }},
           }"
+  
+    prod_update_event:
+    needs: [test, lint]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 16
+      - uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ca-central-1
+          
+      - name: Zip lambda
+        run: zip -j prod_update_event.zip ./lambdas/update_event.py
+      
+      - name: Update lambda code
+        run: aws lambda update-function-code --function-name=prod_update_event --zip-file=fileb://prod_update_event.zip 
+      
+      - name: Delay before updating function code
+        run: sleep 15
+      
+      - name: Update lambda env secrets
+        run: |
+          aws lambda update-function-configuration --function-name prod_update_event --environment "Variables={
+          TRELLO_KEY=${{ secrets.PROD_TRELLO_KEY }},
+          TRELLO_TOKEN=${{ secrets.PROD_TRELLO_TOKEN }}
+          }"
