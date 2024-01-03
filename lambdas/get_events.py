@@ -121,6 +121,9 @@ def map_beekeeping_event(event, card):
 def process_role_line(line, role_name, members):
     """Process role line"""
     #find the string that starts with an @ and ends with a space
+    #check if the line contains an @
+    if "@" not in line:
+        return {'roleName': role_name, 'user': None}
     username = line.split("@")[1].split(" ")[0]
     member = next((member for member in members if member['username'] == username),None)
     if member:
