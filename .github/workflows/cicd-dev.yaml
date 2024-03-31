@@ -39,7 +39,7 @@ jobs:
   #       with:
   #         python-version: 3.10.12
 
-  #     - name: Install dependencies
+  #     - name: Install dependencies 
   #       run:  pip install -r requirements.txt
         
   #     - name: linting
