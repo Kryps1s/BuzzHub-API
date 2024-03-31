@@ -363,6 +363,3 @@ def lambda_handler(event, _):
         events = [event for item in events for event in item['events']]
         events = filter_events_by_date_range(events, date_range)
     return events
-
-
-print(lambda_handler({"arguments": {}}, None))
