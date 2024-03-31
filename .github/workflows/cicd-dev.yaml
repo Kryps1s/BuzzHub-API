@@ -6,47 +6,9 @@ on:
       - develop
       
 jobs:
-  test:
-    runs-on: ubuntu-latest
 
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v2
-
-      - name: Set up Python
-        uses: actions/setup-python@v2
-        with:
-          python-version: 3.10.12
-
-      - name: Install dependencies
-        run: pip install -r requirements.txt
-        
-      - name: set environment variables
-        run: output=$(python set_env_vars.py)
-      
-      - name: testing
-        run: pytest
-
-  lint:
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v2
-
-      - name: Set up Python
-        uses: actions/setup-python@v2
-        with:
-          python-version: 3.10.12
-
-      - name: Install dependencies
-        run:  pip install -r requirements.txt
-        
-      - name: linting
-        run: pylint **/*.py
 
   dev_get_event_by_id:
-    # needs: [test, lint]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -81,7 +43,6 @@ jobs:
           }"
  
   dev_get_events:
-    # needs: [test, lint]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -115,10 +76,14 @@ jobs:
           TRELLO_BOARD_BEEKEEPING=${{ secrets.DEV_TRELLO_BOARD_BEEKEEPING }},
           TRELLO_BOARD_COLLECTIVE=${{ secrets.DEV_TRELLO_BOARD_COLLECTIVE }},
           TRELLO_BOARD_MEETING=${{ secrets.DEV_TRELLO_BOARD_MEETING }}
+          TAIGA_USER=${{ secrets.DEV_TAIGA_USER }},
+          TAIGA_PASSWORD=${{ secrets.DEV_TAIGA_PASSWORD }},
+          TAIGA_PROJECT_MEETING=${{ secrets.DEV_TAIGA_PROJECT_MEETING }},
+          TAIGA_PROJECT_BEEKEEPING=${{ secrets.DEV_TAIGA_PROJECT_BEEKEEPING }},
+          TAIGA_PROJECT_COLLECTIVE=${{ secrets.DEV_TAIGA_PROJECT_COLLECTIVE }}
           }"
     
   dev_get_trello_members:
-    # needs: [test, lint]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -146,10 +111,14 @@ jobs:
           TRELLO_KEY=${{ secrets.DEV_TRELLO_KEY }},
           TRELLO_TOKEN=${{ secrets.DEV_TRELLO_TOKEN }},
           TRELLO_ORGANIZATION=${{ secrets.DEV_TRELLO_ORGANIZATION }}
+          TAIGA_USER=${{ secrets.DEV_TAIGA_USER }},
+          TAIGA_PASSWORD=${{ secrets.DEV_TAIGA_PASSWORD }},
+          TAIGA_PROJECT_MEETING=${{ secrets.DEV_TAIGA_PROJECT_MEETING }},
+          TAIGA_PROJECT_BEEKEEPING=${{ secrets.DEV_TAIGA_PROJECT_BEEKEEPING }},
+          TAIGA_PROJECT_COLLECTIVE=${{ secrets.DEV_TAIGA_PROJECT_COLLECTIVE }}
           }"
           
   dev_create_user:
-    # needs: [test, lint]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -182,7 +151,6 @@ jobs:
           }"
   
   dev_login:
-    # needs: [test, lint]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -211,7 +179,6 @@ jobs:
           }"
       
   dev_save_beekeeping_report:
-    # needs: [test, lint]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -241,10 +208,12 @@ jobs:
           TRELLO_ORGANIZATION=${{ secrets.DEV_TRELLO_ORGANIZATION }},
           BEEKEEPING_LIST_COMPLETED=${{ secrets.DEV_BEEKEEPING_LIST_COMPLETED }},
           BEEKEEPING_LIST_UNASSIGNED=${{ secrets.DEV_BEEKEEPING_LIST_UNASSIGNED }},
+          TAIGA_USER=${{ secrets.DEV_TAIGA_USER }},
+          TAIGA_PASSWORD=${{ secrets.DEV_TAIGA_PASSWORD }},
+          TAIGA_PROJECT_MEETING=${{ secrets.DEV_TAIGA_PROJECT_MEETING }},
           }"
   
   dev_get_meeting_agenda:
-    # needs: [test, lint]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -280,10 +249,14 @@ jobs:
           COLLECTIVE_LIST_COMPLETED=${{ secrets.DEV_COLLECTIVE_LIST_COMPLETED }},
           COLLECTIVE_LIST_IN_PROGRESS=${{ secrets.DEV_COLLECTIVE_LIST_IN_PROGRESS }},
           COLLECTIVE_LIST_UNASSIGNED=${{ secrets.DEV_COLLECTIVE_LIST_UNASSIGNED }},
+          TAIGA_USER=${{ secrets.DEV_TAIGA_USER }},
+          TAIGA_PASSWORD=${{ secrets.DEV_TAIGA_PASSWORD }},
+          TAIGA_PROJECT_MEETING=${{ secrets.DEV_TAIGA_PROJECT_MEETING }},
+          TAIGA_PROJECT_BEEKEEPING=${{ secrets.DEV_TAIGA_PROJECT_BEEKEEPING }},
+          TAIGA_PROJECT_COLLECTIVE=${{ secrets.DEV_TAIGA_PROJECT_COLLECTIVE }}
           }"
 
   dev_update_event:
-    # needs: [test, lint]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -310,4 +283,9 @@ jobs:
           aws lambda update-function-configuration --function-name dev_update_event --environment "Variables={
           TRELLO_KEY=${{ secrets.DEV_TRELLO_KEY }},
           TRELLO_TOKEN=${{ secrets.DEV_TRELLO_TOKEN }}
+          TAIGA_USER=${{ secrets.DEV_TAIGA_USER }},
+          TAIGA_PASSWORD=${{ secrets.DEV_TAIGA_PASSWORD }},
+          TAIGA_PROJECT_MEETING=${{ secrets.DEV_TAIGA_PROJECT_MEETING }},
+          TAIGA_PROJECT_BEEKEEPING=${{ secrets.DEV_TAIGA_PROJECT_BEEKEEPING }},
+          TAIGA_PROJECT_COLLECTIVE=${{ secrets.DEV_TAIGA_PROJECT_COLLECTIVE }}
           }"
