@@ -7,11 +7,22 @@ import json
 from datetime import datetime
 import requests
 
-trello_boards = {
-                "MEETING": os.environ['TRELLO_BOARD_MEETING'],
-                "BEEKEEPING": os.environ['TRELLO_BOARD_BEEKEEPING'],
-                "COLLECTIVE": os.environ['TRELLO_BOARD_COLLECTIVE']
+taiga_projects = {
+                "MEETING": os.environ['TAIGA_PROJECT_MEETING'],
+                "BEEKEEPING": os.environ['TAIGA_PROJECT_BEEKEEPING'],
+                "COLLECTIVE": os.environ['TAIGA_PROJECT_COLLECTIVE']
             }
+
+class Auth:
+    """Auth class for storing token"""
+    def __init__(self, token):
+        self.token = token
+
+    def set_token(self, token):
+        """Set token"""
+        self.token = token
+
+auth = Auth("")
 
 class TrelloAPIError(Exception):
     """Exception raised for errors in the Trello API"""
@@ -28,49 +39,74 @@ def is_valid_json(json_str):
 
 def fetch_events(board_id):
     """Fetch all cards from a board"""
-    url = "https://api.trello.com/1/boards/" + board_id + "/cards"
+    url = "https://api.taiga.io/api/v1/userstories?project="+ board_id
     headers = {
-    "Accept": "application/json"
-    }
-    query = {
-    'key': os.environ['TRELLO_KEY'],
-    'token': os.environ['TRELLO_TOKEN']
+        "Authorization": "Bearer " + auth.token
     }
     response = requests.request(
-    "GET",
-    url,
-    headers=headers,
-    params=query,
-    timeout=30
+        "GET",
+        url,
+        headers=headers,
+        timeout=30
     )
     if response.ok is False:
         raise TrelloAPIError("Trello API error: " + response.text)
     #remove cards with no due date
-    cards = [card for card in response.json() if card['due'] is not None]
+    cards = [card for card in response.json() if card['due_date'] is not None]
+
+    for card in cards:
+        card_id = card['ref']
+        url = f"https://api.taiga.io/api/v1/userstories/by_ref?ref={card_id}&project={board_id}"
+        response = requests.get(url, headers=headers, timeout=30)
+        if response.ok:
+            card_description = response.json().get('description')
+            card['desc'] = card_description if card_description is not None else ""
+            card['shortLink'] = card['id'] if card['id'] is not None else ""
+            card['name'] = card['subject'] if card['subject'] is not None else ""
+            card['due'] = card['due_date'] if card['due_date'] is not None else ""
+            card['labels'] = [{"name": tag[0]} for tag in card['tags']] if card['tags'] is not None else []
+        else:
+            raise TrelloAPIError("Trello API error: " + response.text)
     return cards
 
 def fetch_members():
     """Fetch all members from the organization"""
     #pylint: disable=R0801
-    url = "https://api.trello.com/1/organizations/" + os.environ['TRELLO_ORGANIZATION'] + "/members"
     headers = {
     "Accept": "application/json"
     }
     query = {
-    'key': os.environ['TRELLO_KEY'],
-    'token': os.environ['TRELLO_TOKEN']
+    'username': os.environ['TAIGA_USER'],
+    'password': os.environ['TAIGA_PASSWORD'],
+    'type': "normal"
     }
+    login = requests.request(
+    "post",
+    "https://api.taiga.io/api/v1/auth",
+    headers=headers,
+    json=query,
+    timeout=30
+    )
+    if login.ok is False:
+        raise TrelloAPIError("Taiga API error: " + login.text)
+    auth.set_token(login.json()['auth_token'])
+    headers = {
+    "Accept": "application/json",
+    "Authorization": "Bearer " + auth.token
+    }
+    url = "https://api.taiga.io/api/v1/memberships?project=" + os.environ['TAIGA_PROJECT_MEETING']
     response = requests.request(
     "GET",
     url,
     headers=headers,
-    params=query,
     timeout=30
     )
     if response.ok is False:
         raise TrelloAPIError("Trello API error: " + response['error'])
     #filter invalid members from list of invalid members
     members = list(response.json())
+    members = [{ "id": member["id"], "fullName": member["full_name"],\
+                 "username": member["user_email"] } for member in members]
     return members
 
 def map_meeting_event(event, card, members):
@@ -300,15 +336,15 @@ def lambda_handler(event, _):
         members = fetch_members()
         if event_type is not None:
             for event_type in event['arguments']['type']:
-                if event_type in trello_boards:
-                    board_id = trello_boards[event_type]
+                if event_type in taiga_projects:
+                    board_id = taiga_projects[event_type]
                     events.append({'type': event_type,\
                                    'events': map_card_to_event(members, event_type, \
                                                                fetch_events(board_id))})
                 else:
                     raise InvalidInputError("Invalid type: " + event_type)
         else: #if no type is specified, get all types
-            for event_type, board_id in trello_boards.items():
+            for event_type, board_id in taiga_projects.items():
                 event['type'] = event_type
                 events.append({'type': event_type,\
                                'events': map_card_to_event(members, event_type,\
