@@ -164,7 +164,7 @@ def process_role_line(line, role_name, members):
     member = next((member for member in members if member['username'] == username),None)
     if member:
         return {'roleName': role_name, 'user': member}
-    return {'roleName': role_name, 'user': {'username': username}}
+    return {'roleName': role_name, 'user': {'username': username, 'fullName': username, 'id': 0}}
 
 def get_hive_timelines(jobs):
     """map of inspections and link to previous inspection"""
@@ -364,10 +364,5 @@ def lambda_handler(event, _):
         events = filter_events_by_date_range(events, date_range)
     return events
 
-args = {
-    "type": ["MEETING", "BEEKEEPING"],
-    "limit": 10,
-    "future": True,
-    "isMonthly": True,
-}
-print(lambda_handler({"arguments": args}, None))
+
+print(lambda_handler({"arguments": {}}, None))
