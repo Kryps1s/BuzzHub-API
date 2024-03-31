@@ -7,7 +7,23 @@ UPDATE_KEYS = ['name', 'desc', 'idMembers', 'closed', 'due', 'idList', 'idLabels
 
 def lambda_handler(event, _):
     """update a trello card with the new event information"""
-    #get the trello client
+
+    headers = {
+    "Accept": "application/json"
+    }
+    login = requests.request(
+    "post",
+    "https://api.taiga.io/api/v1/auth",
+    headers=headers,
+    json={
+    'username': os.environ['TAIGA_USER'],
+    'password': os.environ['TAIGA_PASSWORD'],
+    'type': "normal"
+    },
+    timeout=30
+    )
+    auth.set_token(login.json()['auth_token'])
+    #get the trello  client
     #get the card id, name, and description from the event
     card_id = event['arguments']['eventId']
     updates = event['arguments']['updates']
