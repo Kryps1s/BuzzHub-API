@@ -63,7 +63,7 @@ def sort_cards(cards,board):
         elif card['status'] == "completed":
             completed_cards.append(card)
     #sort the unassigned, in progress, and completed cards by due date,
-    # then name. put cards with no due date at the end
+    # then name. put cards with no due date at the end.
     unassigned_cards = sorted(unassigned_cards,\
                               key=lambda card: (card['start'] is None, card['start'], card['name']))
     in_progress_cards = sorted(in_progress_cards,\
