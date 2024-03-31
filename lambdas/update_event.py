@@ -3,11 +3,20 @@ import os
 import requests
 
 #an enum of supported update keys
-UPDATE_KEYS = ['name', 'desc', 'idMembers', 'closed', 'due', 'idList', 'idLabels', 'idBoard']
+UPDATE_KEYS = ['subject', 'description', 'assigned_users', 'due_date', 'status']
+class Auth:
+    """Auth class for storing token"""
+    def __init__(self, token):
+        self.token = token
+
+    def set_token(self, token):
+        """Set token"""
+        self.token = token
+
+auth = Auth("")
 
 def lambda_handler(event, _):
     """update a trello card with the new event information"""
-
     headers = {
     "Accept": "application/json"
     }
@@ -23,7 +32,7 @@ def lambda_handler(event, _):
     timeout=30
     )
     auth.set_token(login.json()['auth_token'])
-    #get the trello  client
+    #get the trello client
     #get the card id, name, and description from the event
     card_id = event['arguments']['eventId']
     updates = event['arguments']['updates']
@@ -34,19 +43,15 @@ def lambda_handler(event, _):
         if key not in UPDATE_KEYS:
             raise ValueError("invalid key: " + key)
     #pylint: disable=R0801
-    url = "https://api.trello.com/1/cards/" + card_id
+    url = "https://api.taiga.io/v1/userstories/" + card_id
     headers = {
-    "Accept": "application/json"
-    }
-    query = {
-    'key': os.environ['TRELLO_KEY'],
-    'token': os.environ['TRELLO_TOKEN'],
+    "Accept": "application/json",
+    "Authorization": "Bearer " + auth.token,
     }
     response = requests.request(
-    "PUT",
+    "PATCH",
     url,
     headers=headers,
-    params=query,
     json=updates,
     timeout=30
     )
