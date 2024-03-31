@@ -64,7 +64,7 @@ def fetch_events(board_id):
             card['shortLink'] = card['id'] if card['id'] is not None else ""
             card['name'] = card['subject'] if card['subject'] is not None else ""
             card['due'] = card['due_date'] if card['due_date'] is not None else ""
-            card['labels'] = [{"name": tag[0]} for tag in card['tags']] if card['tags'] is not None else []
+            card['labels'] = [{"name": tag[0].upper()} for tag in card['tags']] if card['tags'] is not None else []
         else:
             raise TrelloAPIError("Trello API error: " + response.text)
     return cards
@@ -260,23 +260,23 @@ def filter_events_by_future_and_order(events, future):
         for item in events:
             filtered_events = []
             for event in item['events']:
+                event_start = datetime.strptime(event['start'], "%Y-%m-%d").date()
+                current_date = datetime.now().date()
                 if future is True:
-                    if datetime.strptime(event['start'], "%Y-%m-%dT%H:%M:%S.%fZ") > \
-                        datetime.now():
+                    if event_start > current_date:
                         filtered_events.append(event)
                 elif future is False:
-                    if datetime.strptime(event['start'], "%Y-%m-%dT%H:%M:%S.%fZ") < \
-                        datetime.now():
+                    if event_start < current_date:
                         filtered_events.append(event)
             if future is True:
-                #order by start date
-                filtered_events.sort(key=lambda x: x['start'])
+                # Order by start date
+                filtered_events.sort(key=lambda x: datetime.strptime(x['start'], "%Y-%m-%d"))
             elif future is False:
-                filtered_events.sort(key=lambda x: x['start'], reverse=True)
+                filtered_events.sort(key=lambda x: datetime.strptime(x['start'], "%Y-%m-%d"), reverse=True)
             item['events'] = filtered_events
     else:
         for item in events:
-            item['events'].sort(key=lambda x: x['start'])
+            item['events'].sort(key=lambda x: datetime.strptime(x['start'], "%Y-%m-%d"))
     return events
 
 def filter_events_by_beekeeping(item, hives, jobs):
@@ -363,3 +363,11 @@ def lambda_handler(event, _):
         events = [event for item in events for event in item['events']]
         events = filter_events_by_date_range(events, date_range)
     return events
+
+args = {
+    "type": ["MEETING", "BEEKEEPING"],
+    "limit": 10,
+    "future": True,
+    "isMonthly": True,
+}
+print(lambda_handler({"arguments": args}, None))
