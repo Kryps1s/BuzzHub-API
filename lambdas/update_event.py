@@ -32,7 +32,7 @@ def lambda_handler(event, _):
     timeout=30
     )
     auth.set_token(login.json()['auth_token'])
-    #get the trello client
+    #get the trello  client
     #get the card id, name, and description from the event
     card_id = event['arguments']['eventId']
     updates = event['arguments']['updates']
