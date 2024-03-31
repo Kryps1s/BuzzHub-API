@@ -75,11 +75,6 @@ jobs:
           TRELLO_BOARD_BEEKEEPING=${{ secrets.DEV_TRELLO_BOARD_BEEKEEPING }},
           TRELLO_BOARD_COLLECTIVE=${{ secrets.DEV_TRELLO_BOARD_COLLECTIVE }},
           TRELLO_BOARD_MEETING=${{ secrets.DEV_TRELLO_BOARD_MEETING }}
-          TAIGA_USER=${{ secrets.DEV_TAIGA_USER }},
-          TAIGA_PASSWORD=${{ secrets.DEV_TAIGA_PASSWORD }},
-          TAIGA_PROJECT_MEETING=${{ secrets.DEV_TAIGA_PROJECT_MEETING }},
-          TAIGA_PROJECT_BEEKEEPING=${{ secrets.DEV_TAIGA_PROJECT_BEEKEEPING }},
-          TAIGA_PROJECT_COLLECTIVE=${{ secrets.DEV_TAIGA_PROJECT_COLLECTIVE }}
           }"
     
   dev_get_trello_members:
@@ -110,11 +105,6 @@ jobs:
           TRELLO_KEY=${{ secrets.DEV_TRELLO_KEY }},
           TRELLO_TOKEN=${{ secrets.DEV_TRELLO_TOKEN }},
           TRELLO_ORGANIZATION=${{ secrets.DEV_TRELLO_ORGANIZATION }}
-          TAIGA_USER=${{ secrets.DEV_TAIGA_USER }},
-          TAIGA_PASSWORD=${{ secrets.DEV_TAIGA_PASSWORD }},
-          TAIGA_PROJECT_MEETING=${{ secrets.DEV_TAIGA_PROJECT_MEETING }},
-          TAIGA_PROJECT_BEEKEEPING=${{ secrets.DEV_TAIGA_PROJECT_BEEKEEPING }},
-          TAIGA_PROJECT_COLLECTIVE=${{ secrets.DEV_TAIGA_PROJECT_COLLECTIVE }}
           }"
           
   dev_create_user:
@@ -207,9 +197,6 @@ jobs:
           TRELLO_ORGANIZATION=${{ secrets.DEV_TRELLO_ORGANIZATION }},
           BEEKEEPING_LIST_COMPLETED=${{ secrets.DEV_BEEKEEPING_LIST_COMPLETED }},
           BEEKEEPING_LIST_UNASSIGNED=${{ secrets.DEV_BEEKEEPING_LIST_UNASSIGNED }},
-          TAIGA_USER=${{ secrets.DEV_TAIGA_USER }},
-          TAIGA_PASSWORD=${{ secrets.DEV_TAIGA_PASSWORD }},
-          TAIGA_PROJECT_MEETING=${{ secrets.DEV_TAIGA_PROJECT_MEETING }},
           }"
   
   dev_get_meeting_agenda:
@@ -248,11 +235,6 @@ jobs:
           COLLECTIVE_LIST_COMPLETED=${{ secrets.DEV_COLLECTIVE_LIST_COMPLETED }},
           COLLECTIVE_LIST_IN_PROGRESS=${{ secrets.DEV_COLLECTIVE_LIST_IN_PROGRESS }},
           COLLECTIVE_LIST_UNASSIGNED=${{ secrets.DEV_COLLECTIVE_LIST_UNASSIGNED }},
-          TAIGA_USER=${{ secrets.DEV_TAIGA_USER }},
-          TAIGA_PASSWORD=${{ secrets.DEV_TAIGA_PASSWORD }},
-          TAIGA_PROJECT_MEETING=${{ secrets.DEV_TAIGA_PROJECT_MEETING }},
-          TAIGA_PROJECT_BEEKEEPING=${{ secrets.DEV_TAIGA_PROJECT_BEEKEEPING }},
-          TAIGA_PROJECT_COLLECTIVE=${{ secrets.DEV_TAIGA_PROJECT_COLLECTIVE }}
           }"
 
   dev_update_event:
@@ -282,9 +264,4 @@ jobs:
           aws lambda update-function-configuration --function-name dev_update_event --environment "Variables={
           TRELLO_KEY=${{ secrets.DEV_TRELLO_KEY }},
           TRELLO_TOKEN=${{ secrets.DEV_TRELLO_TOKEN }}
-          TAIGA_USER=${{ secrets.DEV_TAIGA_USER }},
-          TAIGA_PASSWORD=${{ secrets.DEV_TAIGA_PASSWORD }},
-          TAIGA_PROJECT_MEETING=${{ secrets.DEV_TAIGA_PROJECT_MEETING }},
-          TAIGA_PROJECT_BEEKEEPING=${{ secrets.DEV_TAIGA_PROJECT_BEEKEEPING }},
-          TAIGA_PROJECT_COLLECTIVE=${{ secrets.DEV_TAIGA_PROJECT_COLLECTIVE }}
           }"
