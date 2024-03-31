@@ -6,47 +6,8 @@ on:
       - develop
       
 jobs:
-  # test:
-  #   runs-on: ubuntu-latest
-
-  #   steps:
-  #     - name: Checkout repository
-  #       uses: actions/checkout@v2
-
-  #     - name: Set up Python
-  #       uses: actions/setup-python@v2
-  #       with:
-  #         python-version: 3.10.12
-
-  #     - name: Install dependencies
-  #       run: pip install -r requirements.txt
-        
-  #     - name: set environment variables
-  #       run: output=$(python set_env_vars.py)
-      
-  #     - name: testing
-  #       run: pytest
-
-  # lint:
-  #   runs-on: ubuntu-latest
-
-  #   steps:
-  #     - name: Checkout repository
-  #       uses: actions/checkout@v2
-
-  #     - name: Set up Python
-  #       uses: actions/setup-python@v2
-  #       with:
-  #         python-version: 3.10.12
-
-  #     - name: Install dependencies 
-  #       run:  pip install -r requirements.txt
-        
-  #     - name: linting
-  #       run: pylint **/*.py
 
   dev_get_event_by_id:
-    # needs: [test, lint]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -81,7 +42,6 @@ jobs:
           }"
  
   dev_get_events:
-    # needs: [test, lint]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -123,7 +83,6 @@ jobs:
           }"
     
   dev_get_trello_members:
-    # needs: [test, lint]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -159,7 +118,6 @@ jobs:
           }"
           
   dev_create_user:
-    # needs: [test, lint]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -192,7 +150,6 @@ jobs:
           }"
   
   dev_login:
-    # needs: [test, lint]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -221,7 +178,6 @@ jobs:
           }"
       
   dev_save_beekeeping_report:
-    # needs: [test, lint]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -257,7 +213,6 @@ jobs:
           }"
   
   dev_get_meeting_agenda:
-    # needs: [test, lint]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -301,7 +256,6 @@ jobs:
           }"
 
   dev_update_event:
-    # needs: [test, lint]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
