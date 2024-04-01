@@ -32,6 +32,19 @@ def fetch_members():
     if response.ok is False:
         raise TrelloAPIError("Trello API error: " + response['error'])
     #filter invalid members from list of invalid members
+    auth = response.json()['auth_token']
+    headers = {
+    "Accept": "application/json",
+    "Authorization": "Bearer " + auth
+    }
+    url = "https://api.taiga.io/api/v1/memberships?project=" + os.environ['TAIGA_PROJECT_MEETING']
+    response = requests.request(
+    "get",
+    url,
+    headers=headers,
+    timeout=30
+    )
+    
     members = list(response.json())
     members = [{ "id": member["id"], "fullName": member["full_name"],\
                  "username": member["user_email"] } for member in members]
@@ -46,9 +59,12 @@ def lambda_handler(event, _):
             member['__typename'] = "TrelloMember"
         #print to cloudwatch logs
         print("members fetched: " + str(len(members)))
+        print(members)
         return members
     except TrelloAPIError as err:
         return {
             'statusCode': 500,
             'body': json.dumps({"error": str(err)})
         }
+
+lambda_handler({}, {})

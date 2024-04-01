@@ -96,14 +96,13 @@ def lambda_handler(event, _):
 
     #get the unassigned, in progress, and completed cards
     #get the beekeeping and collective boards
-    print(event)
+    # print(event)
     beekeeping_cards= get_trello_board(os.environ['TAIGA_PROJECT_BEEKEEPING'])
+    print(beekeeping_cards)
     collective_cards = get_trello_board(os.environ['TAIGA_PROJECT_COLLECTIVE'])
     #get the unassigned, in progress, and completed cards for each board
     beekeeping_cards = sort_cards(beekeeping_cards, 'BEEKEEPING')
     collective_cards = sort_cards(collective_cards, 'COLLECTIVE')
     #return the unassigned, in progress, and completed cards for each board
-    print({'BEEKEEPING': beekeeping_cards, 'COLLECTIVE': collective_cards})
+    # print({'BEEKEEPING': beekeeping_cards, 'COLLECTIVE': collective_cards})
     return {'BEEKEEPING': beekeeping_cards, 'COLLECTIVE': collective_cards}
-
-lambda_handler({}, {})
