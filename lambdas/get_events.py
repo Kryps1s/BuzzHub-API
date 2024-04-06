@@ -41,7 +41,6 @@ def is_valid_json(json_str):
 
 def fetch_events(url):
     """Fetch all cards from a board"""
-    # url = "https://api.taiga.io/api/v1/userstories?project="+ board_id
     headers = {
         "Authorization": "Bearer " + auth.token
     }
@@ -392,12 +391,3 @@ def lambda_handler(event, _):
         events = [event for item in events for event in item['events']]
         events = filter_events_by_date_range(events, date_range)
     return events
-
-print(lambda_handler({
-    "arguments": {
-        "type": ["MEETING", "BEEKEEPING"],
-        "limit": 10,
-        "future": False,
-        "isMonthly": True,
-    }
-}, {}))
