@@ -363,12 +363,3 @@ def lambda_handler(event, _):
         events = filter_events_by_date_range(events, date_range)
     return events
 
-# if __name__ == "__main__":
-print(lambda_handler({
-    "arguments": {
-        "type": ["MEETING", "BEEKEEPING"],
-        "limit": 5,
-        "future": True,
-        "isMonthly": True,
-    }
-}, {}))
