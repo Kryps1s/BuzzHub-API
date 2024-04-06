@@ -1,4 +1,5 @@
 """update a trello card with the new event information"""
+import json
 import os
 import requests
 
@@ -43,16 +44,28 @@ def lambda_handler(event, _):
         if key not in UPDATE_KEYS:
             raise ValueError("invalid key: " + key)
     #pylint: disable=R0801
-    url = "https://api.taiga.io/v1/userstories/" + card_id
+    url = "https://api.taiga.io/api/v1/userstories/" + card_id
     headers = {
     "Accept": "application/json",
     "Authorization": "Bearer " + auth.token,
     }
     response = requests.request(
-    "PATCH",
+    "GET",
     url,
     headers=headers,
     json=updates,
+    timeout=30
+    )
+    if response.ok is False:
+        raise ValueError("Trello API error: " + response.text)
+    response = json.loads(response.text)
+    updates['version'] = response['version']
+    updates['comment'] = "Updated event information"
+    response = requests.request(
+    "PATCH",
+    url,
+    headers=headers,
+    data=updates,
     timeout=30
     )
     if response.ok is False:
