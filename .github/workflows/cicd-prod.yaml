@@ -6,45 +6,7 @@ on:
       - main
       
 jobs:
-  test:
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v2
-
-      - name: Set up Python
-        uses: actions/setup-python@v2
-        with:
-          python-version: 3.10.12
-
-      - name: Install dependencies
-        run: pip install -r requirements.txt
-        
-      - name: set environment variables
-        run: output=$(python set_env_vars.py)
-      
-      - name: testing
-        run: pytest
-
-  lint:
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v2
-
-      - name: Set up Python
-        uses: actions/setup-python@v2
-        with:
-          python-version: 3.10.12
-
-      - name: Install dependencies
-        run: pip install -r requirements.txt
-        
-      - name: linting
-        run: pylint **/*.py
-
+ 
   prod_get_event_by_id:
     needs: [test, lint]
     runs-on: ubuntu-latest
@@ -114,7 +76,15 @@ jobs:
           MEETING_BOARD_ID=${{ secrets.PROD_MEETING_BOARD_ID }},
           TRELLO_BOARD_BEEKEEPING=${{ secrets.PROD_TRELLO_BOARD_BEEKEEPING }},
           TRELLO_BOARD_COLLECTIVE=${{ secrets.PROD_TRELLO_BOARD_COLLECTIVE }},
-          TRELLO_BOARD_MEETING=${{ secrets.PROD_TRELLO_BOARD_MEETING }}
+          TRELLO_BOARD_MEETING=${{ secrets.PROD_TRELLO_BOARD_MEETING }},
+          TAIGA_USER=${{ secrets.PROD_TAIGA_USER }},
+          TAIGA_PASSWORD=${{ secrets.PROD_TAIGA_PASSWORD }},
+          TAIGA_PROJECT_MEETING=${{ secrets.PROD_TAIGA_PROJECT_MEETING }},
+          TAIGA_PROJECT_BEEKEEPING=${{ secrets.PROD_TAIGA_PROJECT_BEEKEEPING }},
+          TAIGA_PROJECT_COLLECTIVE=${{ secrets.PROD_TAIGA_PROJECT_COLLECTIVE }},
+          TAIGA_PROJECT_MEETING_URL=${{ secrets.PROD_TAIGA_PROJECT_MEETING_URL }},
+          TAIGA_PROJECT_BEEKEEPING_URL=${{ secrets.PROD_TAIGA_PROJECT_BEEKEEPING_URL }},
+          TAIGA_PROJECT_COLLECTIVE_URL=${{ secrets.PROD_TAIGA_PROJECT_COLLECTIVE_URL }}
           }"
     
   prod_get_trello_members:
@@ -145,7 +115,16 @@ jobs:
           aws lambda update-function-configuration --function-name prod_get_trello_members --environment "Variables={
           TRELLO_KEY=${{ secrets.PROD_TRELLO_KEY }},
           TRELLO_TOKEN=${{ secrets.PROD_TRELLO_TOKEN }},
-          TRELLO_ORGANIZATION=${{ secrets.PROD_TRELLO_ORGANIZATION }}
+          TRELLO_ORGANIZATION=${{ secrets.PROD_TRELLO_ORGANIZATION }},
+          
+          TAIGA_USER=${{ secrets.PROD_TAIGA_USER }},
+          TAIGA_PASSWORD=${{ secrets.PROD_TAIGA_PASSWORD }},
+          TAIGA_PROJECT_MEETING=${{ secrets.PROD_TAIGA_PROJECT_MEETING }},
+          TAIGA_PROJECT_BEEKEEPING=${{ secrets.PROD_TAIGA_PROJECT_BEEKEEPING }},
+          TAIGA_PROJECT_COLLECTIVE=${{ secrets.PROD_TAIGA_PROJECT_COLLECTIVE }},
+          TAIGA_PROJECT_MEETING_URL=${{ secrets.PROD_TAIGA_PROJECT_MEETING_URL }},
+          TAIGA_PROJECT_BEEKEEPING_URL=${{ secrets.PROD_TAIGA_PROJECT_BEEKEEPING_URL }},
+          TAIGA_PROJECT_COLLECTIVE_URL=${{ secrets.PROD_TAIGA_PROJECT_COLLECTIVE_URL }}
           }"
           
   prod_create_user:
@@ -241,6 +220,14 @@ jobs:
           TRELLO_ORGANIZATION=${{ secrets.PROD_TRELLO_ORGANIZATION }},
           BEEKEEPING_LIST_COMPLETED=${{ secrets.PROD_BEEKEEPING_LIST_COMPLETED }},
           BEEKEEPING_LIST_UNASSIGNED=${{ secrets.PROD_BEEKEEPING_LIST_UNASSIGNED }},
+          TAIGA_USER=${{ secrets.PROD_TAIGA_USER }},
+          TAIGA_PASSWORD=${{ secrets.PROD_TAIGA_PASSWORD }},
+          TAIGA_PROJECT_MEETING=${{ secrets.PROD_TAIGA_PROJECT_MEETING }},
+          TAIGA_PROJECT_BEEKEEPING=${{ secrets.PROD_TAIGA_PROJECT_BEEKEEPING }},
+          TAIGA_PROJECT_COLLECTIVE=${{ secrets.PROD_TAIGA_PROJECT_COLLECTIVE }},
+          TAIGA_PROJECT_MEETING_URL=${{ secrets.PROD_TAIGA_PROJECT_MEETING_URL }},
+          TAIGA_PROJECT_BEEKEEPING_URL=${{ secrets.PROD_TAIGA_PROJECT_BEEKEEPING_URL }},
+          TAIGA_PROJECT_COLLECTIVE_URL=${{ secrets.PROD_TAIGA_PROJECT_COLLECTIVE_URL }}
           }"
 
   prod_get_meeting_agenda:
@@ -280,6 +267,14 @@ jobs:
           COLLECTIVE_LIST_COMPLETED=${{ secrets.PROD_COLLECTIVE_LIST_COMPLETED }},
           COLLECTIVE_LIST_IN_PROGRESS=${{ secrets.PROD_COLLECTIVE_LIST_IN_PROGRESS }},
           COLLECTIVE_LIST_UNASSIGNED=${{ secrets.PROD_COLLECTIVE_LIST_UNASSIGNED }},
+          TAIGA_USER=${{ secrets.PROD_TAIGA_USER }},
+          TAIGA_PASSWORD=${{ secrets.PROD_TAIGA_PASSWORD }},
+          TAIGA_PROJECT_MEETING=${{ secrets.PROD_TAIGA_PROJECT_MEETING }},
+          TAIGA_PROJECT_BEEKEEPING=${{ secrets.PROD_TAIGA_PROJECT_BEEKEEPING }},
+          TAIGA_PROJECT_COLLECTIVE=${{ secrets.PROD_TAIGA_PROJECT_COLLECTIVE }},
+          TAIGA_PROJECT_MEETING_URL=${{ secrets.PROD_TAIGA_PROJECT_MEETING_URL }},
+          TAIGA_PROJECT_BEEKEEPING_URL=${{ secrets.PROD_TAIGA_PROJECT_BEEKEEPING_URL }},
+          TAIGA_PROJECT_COLLECTIVE_URL=${{ secrets.PROD_TAIGA_PROJECT_COLLECTIVE_URL }}
           }"
 
   prod_update_event:
@@ -309,5 +304,13 @@ jobs:
         run: |
           aws lambda update-function-configuration --function-name prod_update_event --environment "Variables={
           TRELLO_KEY=${{ secrets.PROD_TRELLO_KEY }},
-          TRELLO_TOKEN=${{ secrets.PROD_TRELLO_TOKEN }}
+          TRELLO_TOKEN=${{ secrets.PROD_TRELLO_TOKEN }},
+          TAIGA_USER=${{ secrets.PROD_TAIGA_USER }},
+          TAIGA_PASSWORD=${{ secrets.PROD_TAIGA_PASSWORD }},
+          TAIGA_PROJECT_MEETING=${{ secrets.PROD_TAIGA_PROJECT_MEETING }},
+          TAIGA_PROJECT_BEEKEEPING=${{ secrets.PROD_TAIGA_PROJECT_BEEKEEPING }},
+          TAIGA_PROJECT_COLLECTIVE=${{ secrets.PROD_TAIGA_PROJECT_COLLECTIVE }},
+          TAIGA_PROJECT_MEETING_URL=${{ secrets.PROD_TAIGA_PROJECT_MEETING_URL }},
+          TAIGA_PROJECT_BEEKEEPING_URL=${{ secrets.PROD_TAIGA_PROJECT_BEEKEEPING_URL }},
+          TAIGA_PROJECT_COLLECTIVE_URL=${{ secrets.PROD_TAIGA_PROJECT_COLLECTIVE_URL }}
           }"
