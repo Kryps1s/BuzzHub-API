@@ -1,4 +1,5 @@
 """ get the current agenda for the weekly meeting """
+import csv
 import os
 import requests
 
@@ -13,9 +14,8 @@ class Auth:
 
 auth = Auth("")
 
-def get_trello_board(board):
+def get_trello_board(url):
     """get taiga board"""
-    url = "https://api.taiga.io/api/v1/userstories?project="+ board
     headers = {
         "Authorization": "Bearer " + auth.token
     }
@@ -25,8 +25,11 @@ def get_trello_board(board):
         headers=headers,
         timeout=30
     )
-    resp = response.json()
-    return resp
+    cards = csv.DictReader(response.text.splitlines())
+    cards = [dict(card) for card in cards]
+
+    
+    return cards
 
 def sort_cards(cards,board):
     """sort cards into unassigned, in progress, and completed"""
@@ -50,18 +53,18 @@ def sort_cards(cards,board):
     for card in cards:
         #remove every in card but its name, and list id, idMembers, labels, due, and short link
         card = {'name': card['subject'],
-                'idList': card['status_extra_info']['name'].lower(), 
+                'status': card['status'].lower(), 
                 'participants': card['assigned_users'],
-                'labels': [{"name": tag[0]} for tag in card['tags']] if card['tags'] is not None else [],
+                'labels': [{"name": tag.strip().upper()} for tag in card['tags'].split(",")] if card['tags'] is not None else [],
                 'start': card['due_date'],
                 'eventId': card['ref']}
         #convert the labels to a list of string names of the labels
         card['labels'] = [label['name'] for label in card['labels']]
-        if card['idList'] == "unassigned":
+        if card['status'] == "unassigned":
             unassigned_cards.append(card)
-        elif card['idList'] == "in_progress":
+        elif card['status'] == "in progress":
             in_progress_cards.append(card)
-        elif card['idList'] == "completed":
+        elif card['status'] == "completed":
             completed_cards.append(card)
     #sort the unassigned, in progress, and completed cards by due date,
     # then name. put cards with no due date at the end
@@ -98,8 +101,8 @@ def lambda_handler(event, _):
     #get the unassigned, in progress, and completed cards
     #get the beekeeping and collective boards
     print(event)
-    beekeeping_cards= get_trello_board(os.environ['TAIGA_PROJECT_BEEKEEPING'])
-    collective_cards = get_trello_board(os.environ['TAIGA_PROJECT_COLLECTIVE'])
+    beekeeping_cards= get_trello_board(os.environ['TAIGA_PROJECT_BEEKEEPING_URL'])
+    collective_cards = get_trello_board(os.environ['TAIGA_PROJECT_COLLECTIVE_URL'])
     #get the unassigned, in progress, and completed cards for each board
     beekeeping_cards = sort_cards(beekeeping_cards, 'BEEKEEPING')
     collective_cards = sort_cards(collective_cards, 'COLLECTIVE')
