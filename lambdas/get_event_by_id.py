@@ -8,7 +8,7 @@ import json
 import requests
 
 def is_valid_json(json_str):
-    """Check if  string is valid json"""
+    """Check if string is valid json"""
     try:
         #convert string to json
         json.loads(json_str)
