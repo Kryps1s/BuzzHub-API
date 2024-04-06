@@ -3,14 +3,15 @@ This lambda function will return all events in the calendar, with optional modif
 """
     # pylint: disable=R0801
 import os
+import csv
 import json
 from datetime import datetime
 import requests
 
 taiga_projects = {
-                "MEETING": os.environ['TAIGA_PROJECT_MEETING'],
-                "BEEKEEPING": os.environ['TAIGA_PROJECT_BEEKEEPING'],
-                "COLLECTIVE": os.environ['TAIGA_PROJECT_COLLECTIVE']
+                "MEETING": os.environ['TAIGA_PROJECT_MEETING_URL'],
+                "BEEKEEPING": os.environ['TAIGA_PROJECT_BEEKEEPING_URL'],
+                "COLLECTIVE": os.environ['TAIGA_PROJECT_COLLECTIVE_URL']
             }
 
 class Auth:
@@ -37,9 +38,9 @@ def is_valid_json(json_str):
     except json.JSONDecodeError:
         return False
 
-def fetch_events(board_id):
+def fetch_events(url):
     """Fetch all cards from a board"""
-    url = "https://api.taiga.io/api/v1/userstories?project="+ board_id
+    # url = "https://api.taiga.io/api/v1/userstories?project="+ board_id
     headers = {
         "Authorization": "Bearer " + auth.token
     }
@@ -52,21 +53,19 @@ def fetch_events(board_id):
     if response.ok is False:
         raise TrelloAPIError("Trello API error: " + response.text)
     #remove cards with no due date
-    cards = [card for card in response.json() if card['due_date'] is not None]
+
+    # parse csv to json
+    cards = csv.DictReader(response.text.splitlines())
+    cards = [dict(card) for card in cards]
+    cards = [card for card in cards if card['due_date'] is not None and card['due_date'] != ""]
 
     for card in cards:
-        card_id = card['ref']
-        url = f"https://api.taiga.io/api/v1/userstories/by_ref?ref={card_id}&project={board_id}"
-        response = requests.get(url, headers=headers, timeout=30)
-        if response.ok:
-            card_description = response.json().get('description')
-            card['desc'] = card_description if card_description is not None else ""
-            card['shortLink'] = card['id'] if card['id'] is not None else ""
-            card['name'] = card['subject'] if card['subject'] is not None else ""
-            card['due'] = card['due_date'] if card['due_date'] is not None else ""
-            card['labels'] = [{"name": tag[0].upper()} for tag in card['tags']] if card['tags'] is not None else []
-        else:
-            raise TrelloAPIError("Trello API error: " + response.text)
+        card_description = card['description']
+        card['desc'] = card_description if card_description is not None else ""
+        card['shortLink'] = card['id'] if card['id'] is not None else ""
+        card['name'] = card['subject'] if card['subject'] is not None else ""
+        card['due'] = card['due_date'] if card['due_date'] is not None else ""
+        card['labels'] = [{"name": tag.strip().upper()} for tag in card['tags'].split(",")]
     return cards
 
 def fetch_members():
@@ -304,7 +303,7 @@ def filter_events_by_meeting(item, is_monthly):
     if is_monthly is True:
         filtered_events = []
         for meeting_event in item['events']:
-            if meeting_event["isMonthly"] is True:
+            if "isMonthly" in meeting_event and meeting_event["isMonthly"] is True:
                 filtered_events.append(meeting_event)
         item['events'] = filtered_events
     return item
@@ -363,3 +362,13 @@ def lambda_handler(event, _):
         events = [event for item in events for event in item['events']]
         events = filter_events_by_date_range(events, date_range)
     return events
+
+# if __name__ == "__main__":
+print(lambda_handler({
+    "arguments": {
+        "type": ["MEETING", "BEEKEEPING"],
+        "limit": 5,
+        "future": True,
+        "isMonthly": True,
+    }
+}, {}))

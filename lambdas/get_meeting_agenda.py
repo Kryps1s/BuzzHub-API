@@ -25,7 +25,8 @@ def get_trello_board(board):
         headers=headers,
         timeout=30
     )
-    return response.json()
+    resp = response.json()
+    return resp
 
 def sort_cards(cards,board):
     """sort cards into unassigned, in progress, and completed"""
@@ -49,18 +50,18 @@ def sort_cards(cards,board):
     for card in cards:
         #remove every in card but its name, and list id, idMembers, labels, due, and short link
         card = {'name': card['subject'],
-                'status': card['status_extra_info']['name'].lower(), 
+                'idList': card['status_extra_info']['name'].lower(), 
                 'participants': card['assigned_users'],
                 'labels': [{"name": tag[0]} for tag in card['tags']] if card['tags'] is not None else [],
                 'start': card['due_date'],
                 'eventId': card['ref']}
         #convert the labels to a list of string names of the labels
         card['labels'] = [label['name'] for label in card['labels']]
-        if card['status'] == "unassigned":
+        if card['idList'] == "unassigned":
             unassigned_cards.append(card)
-        elif card['status'] == "in_progress":
+        elif card['idList'] == "in_progress":
             in_progress_cards.append(card)
-        elif card['status'] == "completed":
+        elif card['idList'] == "completed":
             completed_cards.append(card)
     #sort the unassigned, in progress, and completed cards by due date,
     # then name. put cards with no due date at the end
@@ -96,13 +97,12 @@ def lambda_handler(event, _):
 
     #get the unassigned, in progress, and completed cards
     #get the beekeeping and collective boards
-    # print(event)
+    print(event)
     beekeeping_cards= get_trello_board(os.environ['TAIGA_PROJECT_BEEKEEPING'])
-    print(beekeeping_cards)
     collective_cards = get_trello_board(os.environ['TAIGA_PROJECT_COLLECTIVE'])
     #get the unassigned, in progress, and completed cards for each board
     beekeeping_cards = sort_cards(beekeeping_cards, 'BEEKEEPING')
     collective_cards = sort_cards(collective_cards, 'COLLECTIVE')
     #return the unassigned, in progress, and completed cards for each board
-    # print({'BEEKEEPING': beekeeping_cards, 'COLLECTIVE': collective_cards})
+    print({'BEEKEEPING': beekeeping_cards, 'COLLECTIVE': collective_cards})
     return {'BEEKEEPING': beekeeping_cards, 'COLLECTIVE': collective_cards}
