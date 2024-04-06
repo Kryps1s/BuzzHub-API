@@ -4,6 +4,7 @@ This lambda function will return all events in the calendar, with optional modif
     # pylint: disable=R0801
 import os
 import csv
+import re
 import json
 from datetime import datetime
 import requests
@@ -93,7 +94,7 @@ def fetch_members():
     "Accept": "application/json",
     "Authorization": "Bearer " + auth.token
     }
-    url = "https://api.taiga.io/api/v1/memberships?project=" + os.environ['TAIGA_PROJECT_MEETING']
+    url = "https://api.taiga.io/api/v1/users?project=" + os.environ['TAIGA_PROJECT_MEETING']
     response = requests.request(
     "GET",
     url,
@@ -105,7 +106,7 @@ def fetch_members():
     #filter invalid members from list of invalid members
     members = list(response.json())
     members = [{ "id": member["id"], "fullName": member["full_name"],\
-                 "username": member["user_email"] } for member in members]
+                 "username": member["username"] } for member in members]
     return members
 
 def map_meeting_event(event, card, members):
@@ -120,14 +121,43 @@ def map_meeting_event(event, card, members):
             event['location'] = "ONLINE"
         if label['name'] == "IN-PERSON":
             event['location'] = "IN-PERSON"
-    desc = card['desc'].split("\n\n")
-    for line in desc:
-        if line.startswith("📣"):
-            event['roles'].append(process_role_line(line, "Facilitator",members))
-        elif line.startswith("🔧"):
-            event['roles'].append(process_role_line(line, "Jockey",members))
-        elif line.startswith("✏️"):
-            event['roles'].append(process_role_line(line, "Scribe",members))
+    desc = card['desc']
+    # Find all emojis
+    emojis = ["📣", "🔧", "✏️"]
+    # Find next word starting with '@' symbol after each emoji
+    for emoji in emojis:
+        next_word = re.search(r'@(\w+)', desc[desc.find(emoji)+len(emoji):])
+        if emoji == "📣":
+            if next_word:
+                event['roles'].append(process_role_line("@" + next_word.group(1), "Facilitator", members))
+            else:
+                event['roles'].append({'roleName': "Facilitator", 'user': None})
+        elif emoji == "🔧":
+            if next_word:
+                event['roles'].append(process_role_line("@" + next_word.group(1), "Jockey", members))
+            else:
+                event['roles'].append({'roleName': "Jockey", 'user': None})
+        elif emoji == "✏️":
+            if next_word:
+                event['roles'].append(process_role_line("@" + next_word.group(1), "Scribe", members))
+            else:
+                event['roles'].append({'roleName': "Scribe", 'user': None})
+    #loop through description
+    # for line in desc:
+    #     if line.startswith("📣"):
+            
+    #         event['roles'].append(process_role_line(line, "Facilitator",members))
+    #     elif line.startswith("🔧"):
+    #         event['roles'].append(process_role_line(line, "Jockey",members))
+    #     elif line.startswith("✏️"):
+    #         event['roles'].append(process_role_line(line, "Scribe",members))
+    # for line in desc:
+    #     if line.startswith("📣"):
+    #         event['roles'].append(process_role_line(line, "Facilitator",members))
+    #     elif line.startswith("🔧"):
+    #         event['roles'].append(process_role_line(line, "Jockey",members))
+    #     elif line.startswith("✏️"):
+    #         event['roles'].append(process_role_line(line, "Scribe",members))
     return event
 
 def map_beekeeping_event(event, card):
@@ -363,3 +393,11 @@ def lambda_handler(event, _):
         events = filter_events_by_date_range(events, date_range)
     return events
 
+print(lambda_handler({
+    "arguments": {
+        "type": ["MEETING", "BEEKEEPING"],
+        "limit": 10,
+        "future": False,
+        "isMonthly": True,
+    }
+}, {}))
