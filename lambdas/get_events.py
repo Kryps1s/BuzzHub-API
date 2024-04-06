@@ -3,15 +3,28 @@ This lambda function will return all events in the calendar, with optional modif
 """
     # pylint: disable=R0801
 import os
+import csv
+import re
 import json
 from datetime import datetime
 import requests
 
-trello_boards = {
-                "MEETING": os.environ['TRELLO_BOARD_MEETING'],
-                "BEEKEEPING": os.environ['TRELLO_BOARD_BEEKEEPING'],
-                "COLLECTIVE": os.environ['TRELLO_BOARD_COLLECTIVE']
+taiga_projects = {
+                "MEETING": os.environ['TAIGA_PROJECT_MEETING_URL'],
+                "BEEKEEPING": os.environ['TAIGA_PROJECT_BEEKEEPING_URL'],
+                "COLLECTIVE": os.environ['TAIGA_PROJECT_COLLECTIVE_URL']
             }
+
+class Auth:
+    """Auth class for storing token"""
+    def __init__(self, token):
+        self.token = token
+
+    def set_token(self, token):
+        """Set token"""
+        self.token = token
+
+auth = Auth("")
 
 class TrelloAPIError(Exception):
     """Exception raised for errors in the Trello API"""
@@ -26,51 +39,73 @@ def is_valid_json(json_str):
     except json.JSONDecodeError:
         return False
 
-def fetch_events(board_id):
+def fetch_events(url):
     """Fetch all cards from a board"""
-    url = "https://api.trello.com/1/boards/" + board_id + "/cards"
     headers = {
-    "Accept": "application/json"
-    }
-    query = {
-    'key': os.environ['TRELLO_KEY'],
-    'token': os.environ['TRELLO_TOKEN']
+        "Authorization": "Bearer " + auth.token
     }
     response = requests.request(
-    "GET",
-    url,
-    headers=headers,
-    params=query,
-    timeout=30
+        "GET",
+        url,
+        headers=headers,
+        timeout=30
     )
     if response.ok is False:
         raise TrelloAPIError("Trello API error: " + response.text)
     #remove cards with no due date
-    cards = [card for card in response.json() if card['due'] is not None]
+
+    # parse csv to json
+    cards = csv.DictReader(response.text.splitlines())
+    cards = [dict(card) for card in cards]
+    cards = [card for card in cards if card['due_date'] is not None and card['due_date'] != ""]
+
+    for card in cards:
+        card_description = card['description']
+        card['desc'] = card_description if card_description is not None else ""
+        card['shortLink'] = card['id'] if card['id'] is not None else ""
+        card['name'] = card['subject'] if card['subject'] is not None else ""
+        card['due'] = card['due_date'] if card['due_date'] is not None else ""
+        card['labels'] = [{"name": tag.strip().upper()} for tag in card['tags'].split(",")]
     return cards
 
 def fetch_members():
     """Fetch all members from the organization"""
     #pylint: disable=R0801
-    url = "https://api.trello.com/1/organizations/" + os.environ['TRELLO_ORGANIZATION'] + "/members"
     headers = {
     "Accept": "application/json"
     }
     query = {
-    'key': os.environ['TRELLO_KEY'],
-    'token': os.environ['TRELLO_TOKEN']
+    'username': os.environ['TAIGA_USER'],
+    'password': os.environ['TAIGA_PASSWORD'],
+    'type': "normal"
     }
+    login = requests.request(
+    "post",
+    "https://api.taiga.io/api/v1/auth",
+    headers=headers,
+    json=query,
+    timeout=30
+    )
+    if login.ok is False:
+        raise TrelloAPIError("Taiga API error: " + login.text)
+    auth.set_token(login.json()['auth_token'])
+    headers = {
+    "Accept": "application/json",
+    "Authorization": "Bearer " + auth.token
+    }
+    url = "https://api.taiga.io/api/v1/users?project=" + os.environ['TAIGA_PROJECT_MEETING']
     response = requests.request(
     "GET",
     url,
     headers=headers,
-    params=query,
     timeout=30
     )
     if response.ok is False:
         raise TrelloAPIError("Trello API error: " + response['error'])
     #filter invalid members from list of invalid members
     members = list(response.json())
+    members = [{ "id": member["id"], "fullName": member["full_name"],\
+                 "username": member["username"] } for member in members]
     return members
 
 def map_meeting_event(event, card, members):
@@ -85,14 +120,43 @@ def map_meeting_event(event, card, members):
             event['location'] = "ONLINE"
         if label['name'] == "IN-PERSON":
             event['location'] = "IN-PERSON"
-    desc = card['desc'].split("\n\n")
-    for line in desc:
-        if line.startswith("📣"):
-            event['roles'].append(process_role_line(line, "Facilitator",members))
-        elif line.startswith("🔧"):
-            event['roles'].append(process_role_line(line, "Jockey",members))
-        elif line.startswith("✏️"):
-            event['roles'].append(process_role_line(line, "Scribe",members))
+    desc = card['desc']
+    # Find all emojis
+    emojis = ["📣", "🔧", "✏️"]
+    # Find next word starting with '@' symbol after each emoji
+    for emoji in emojis:
+        next_word = re.search(r'@(\w+)', desc[desc.find(emoji)+len(emoji):])
+        if emoji == "📣":
+            if next_word:
+                event['roles'].append(process_role_line("@" + next_word.group(1), "Facilitator", members))
+            else:
+                event['roles'].append({'roleName': "Facilitator", 'user': None})
+        elif emoji == "🔧":
+            if next_word:
+                event['roles'].append(process_role_line("@" + next_word.group(1), "Jockey", members))
+            else:
+                event['roles'].append({'roleName': "Jockey", 'user': None})
+        elif emoji == "✏️":
+            if next_word:
+                event['roles'].append(process_role_line("@" + next_word.group(1), "Scribe", members))
+            else:
+                event['roles'].append({'roleName': "Scribe", 'user': None})
+    #loop through description
+    # for line in desc:
+    #     if line.startswith("📣"):
+            
+    #         event['roles'].append(process_role_line(line, "Facilitator",members))
+    #     elif line.startswith("🔧"):
+    #         event['roles'].append(process_role_line(line, "Jockey",members))
+    #     elif line.startswith("✏️"):
+    #         event['roles'].append(process_role_line(line, "Scribe",members))
+    # for line in desc:
+    #     if line.startswith("📣"):
+    #         event['roles'].append(process_role_line(line, "Facilitator",members))
+    #     elif line.startswith("🔧"):
+    #         event['roles'].append(process_role_line(line, "Jockey",members))
+    #     elif line.startswith("✏️"):
+    #         event['roles'].append(process_role_line(line, "Scribe",members))
     return event
 
 def map_beekeeping_event(event, card):
@@ -128,7 +192,7 @@ def process_role_line(line, role_name, members):
     member = next((member for member in members if member['username'] == username),None)
     if member:
         return {'roleName': role_name, 'user': member}
-    return {'roleName': role_name, 'user': {'username': username}}
+    return {'roleName': role_name, 'user': {'username': username, 'fullName': username, 'id': 0}}
 
 def get_hive_timelines(jobs):
     """map of inspections and link to previous inspection"""
@@ -224,23 +288,23 @@ def filter_events_by_future_and_order(events, future):
         for item in events:
             filtered_events = []
             for event in item['events']:
+                event_start = datetime.strptime(event['start'], "%Y-%m-%d").date()
+                current_date = datetime.now().date()
                 if future is True:
-                    if datetime.strptime(event['start'], "%Y-%m-%dT%H:%M:%S.%fZ") > \
-                        datetime.now():
+                    if event_start > current_date:
                         filtered_events.append(event)
                 elif future is False:
-                    if datetime.strptime(event['start'], "%Y-%m-%dT%H:%M:%S.%fZ") < \
-                        datetime.now():
+                    if event_start < current_date:
                         filtered_events.append(event)
             if future is True:
-                #order by start date
-                filtered_events.sort(key=lambda x: x['start'])
+                # Order by start date
+                filtered_events.sort(key=lambda x: datetime.strptime(x['start'], "%Y-%m-%d"))
             elif future is False:
-                filtered_events.sort(key=lambda x: x['start'], reverse=True)
+                filtered_events.sort(key=lambda x: datetime.strptime(x['start'], "%Y-%m-%d"), reverse=True)
             item['events'] = filtered_events
     else:
         for item in events:
-            item['events'].sort(key=lambda x: x['start'])
+            item['events'].sort(key=lambda x: datetime.strptime(x['start'], "%Y-%m-%d"))
     return events
 
 def filter_events_by_beekeeping(item, hives, jobs):
@@ -268,7 +332,7 @@ def filter_events_by_meeting(item, is_monthly):
     if is_monthly is True:
         filtered_events = []
         for meeting_event in item['events']:
-            if meeting_event["isMonthly"] is True:
+            if "isMonthly" in meeting_event and meeting_event["isMonthly"] is True:
                 filtered_events.append(meeting_event)
         item['events'] = filtered_events
     return item
@@ -300,15 +364,15 @@ def lambda_handler(event, _):
         members = fetch_members()
         if event_type is not None:
             for event_type in event['arguments']['type']:
-                if event_type in trello_boards:
-                    board_id = trello_boards[event_type]
+                if event_type in taiga_projects:
+                    board_id = taiga_projects[event_type]
                     events.append({'type': event_type,\
                                    'events': map_card_to_event(members, event_type, \
                                                                fetch_events(board_id))})
                 else:
                     raise InvalidInputError("Invalid type: " + event_type)
         else: #if no type is specified, get all types
-            for event_type, board_id in trello_boards.items():
+            for event_type, board_id in taiga_projects.items():
                 event['type'] = event_type
                 events.append({'type': event_type,\
                                'events': map_card_to_event(members, event_type,\
