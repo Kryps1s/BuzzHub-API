@@ -54,7 +54,7 @@ def sort_cards(cards,board):
         #remove every in card but its name, and list id, idMembers, labels, due, and short link
         card = {'name': card['subject'],
                 'status': card['status'].lower(), 
-                'participants': card['assigned_users'],
+                'participants': card['assigned_users_full_name'].split(",") if card['assigned_users_full_name'] != "" else [],
                 'labels': [{"name": tag.strip().upper()} for tag in card['tags'].split(",")] if card['tags'] is not None else [],
                 'start': card['due_date'],
                 'eventId': card['ref']}
