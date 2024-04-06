@@ -37,7 +37,7 @@ def fetch_members():
     "Accept": "application/json",
     "Authorization": "Bearer " + auth
     }
-    url = "https://api.taiga.io/api/v1/memberships?project=" + os.environ['TAIGA_PROJECT_MEETING']
+    url = "https://api.taiga.io/api/v1/users?project=" + os.environ['TAIGA_PROJECT_MEETING']
     response = requests.request(
     "get",
     url,
@@ -47,7 +47,7 @@ def fetch_members():
     
     members = list(response.json())
     members = [{ "id": member["id"], "fullName": member["full_name"],\
-                 "username": member["user_email"] } for member in members]
+                 "username": member["username"] } for member in members]
     return members
 # pylint: disable=W0613
 def lambda_handler(event, _):
