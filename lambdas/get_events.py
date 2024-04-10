@@ -6,7 +6,7 @@ import os
 import csv
 import re
 import json
-from datetime import datetime
+from datetime import datetime, timedelta
 import requests
 
 taiga_projects = {
@@ -390,4 +390,9 @@ def lambda_handler(event, _):
         #flatten events
         events = [event for item in events for event in item['events']]
         events = filter_events_by_date_range(events, date_range)
+        for event in events:
+            event['start'] = datetime.strptime(event['start'], "%Y-%m-%d") + timedelta(hours=4)
+            if event['type'] == "MEETING":
+                event['start'] = event['start'].replace(hour=18, minute=0, second=0)
+            event['start'] = event['start'].isoformat()
     return events
